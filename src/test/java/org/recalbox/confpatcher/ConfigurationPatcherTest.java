@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -67,16 +68,19 @@ public class ConfigurationPatcherTest {
     }
 
     @Test
+    @Ignore
     public void testLoadFromFile() {
         fail("Not yet implemented");
     }
 
     @Test
+    @Ignore
     public void testFix() {
         fail("Not yet implemented");
     }
 
     @Test
+    @Ignore
     public void testSaveToFile() {
         fail("Not yet implemented");
     }

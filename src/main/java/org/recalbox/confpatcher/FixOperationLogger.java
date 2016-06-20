@@ -1,4 +1,4 @@
-package org.recalbox.confpatcher.recalbox;
+package org.recalbox.confpatcher;
 
 public interface FixOperationLogger {
 

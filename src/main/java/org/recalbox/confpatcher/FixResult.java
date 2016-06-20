@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Set;
 import static java.util.stream.Collectors.*;
 
-import org.recalbox.confpatcher.recalbox.FixOperationLogger;
-
 public class FixResult implements FixOperationLogger {
 
     private Set<String> fixedRecalGames = new HashSet<>();

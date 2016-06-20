@@ -77,7 +77,14 @@ public class ConfigurationPatcher {
             return;
         }
         
-        recalboxGame.setDesc(hyperspinGame.getDescription());        
+        recalboxGame.setName(hyperspinGame.getDescription());
+        recalboxGame.setDesc(hyperspinGame.getSynopsis());
+        recalboxGame.setReleasedate(hyperspinGame.getYear()+"0124T000000");
+        recalboxGame.setDeveloper(hyperspinGame.getManufacturer());
+        recalboxGame.setPublisher(hyperspinGame.getDeveloper());
+        recalboxGame.setGenre(hyperspinGame.getGenre());
+        recalboxGame.setPlayers(hyperspinGame.getPlayers());
+        
         operationLogger.logGameFixed(name);
     }
     

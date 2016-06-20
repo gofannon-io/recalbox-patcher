@@ -4,9 +4,15 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 public class HyperspinGame {
-    
+
     private String name;
     private String description;
+    private String synopsis;
+    private int year;
+    private String manufacturer;
+    private String developer;
+    private String genre;
+    private String players;
 
     public HyperspinGame() {
     }
@@ -16,7 +22,7 @@ public class HyperspinGame {
         this.description = description;
     }
 
-    @XmlAttribute(name="name", required=true)
+    @XmlAttribute(name = "name", required = true)
     public String getName() {
         return name;
     }
@@ -25,7 +31,7 @@ public class HyperspinGame {
         this.name = name;
     }
 
-    @XmlElement(name="description", required=true)
+    @XmlElement(name = "description", required = true)
     public String getDescription() {
         return description;
     }
@@ -33,5 +39,59 @@ public class HyperspinGame {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
+    @XmlElement(name = "synopsis", required = true)
+    public String getSynopsis() {
+        return synopsis;
+    }
+
+    public void setSynopsis(String synopsis) {
+        this.synopsis = synopsis;
+    }
+
+    @XmlElement(name = "year", required = true)
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    @XmlElement(name = "manufacturer", required = true)
+    public String getManufacturer() {
+        return manufacturer;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    @XmlElement(name = "developer", required = true)
+    public String getDeveloper() {
+        return developer;
+    }
+
+    public void setDeveloper(String developer) {
+        this.developer = developer;
+    }
+
+    @XmlElement(name = "genre", required = true)
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    @XmlElement(name = "players", required = true)
+    public String getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(String players) {
+        this.players = players;
+    }
+
 }
