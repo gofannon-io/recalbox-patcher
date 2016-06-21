@@ -6,6 +6,4 @@ public interface FixOperationLogger {
 
     void logGameNotFoundInHypersinDatabase(String name);
 
-    void logImageNotFound(String nameFromPath);
-
 }

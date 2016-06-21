@@ -67,8 +67,6 @@ public class ConfigurationPatcher {
     }
     
     private void fixGame(RecalboxGame recalboxGame) {
-        fixImage(recalboxGame);
-        
         String name = recalboxGame.getNameFromPath();
         
         HyperspinGame hyperspinGame = findGame(recalboxGame);
@@ -88,16 +86,6 @@ public class ConfigurationPatcher {
         operationLogger.logGameFixed(name);
     }
     
-    private void fixImage(RecalboxGame game) {
-        String image = game.getImage();
-        if( image == null) {
-            operationLogger.logImageNotFound(game.getNameFromPath());
-        } else {
-            String fixedImage = image.replace("-image.", ".");
-            game.setImage(fixedImage);
-        }
-    }
-    
     private HyperspinGame findGame(RecalboxGame recalboxGame) {
         String name = recalboxGame.getNameFromPath();
         HyperspinGame hyperspinGame = hyperspinDatabase.findByName(name);
@@ -113,7 +101,6 @@ public class ConfigurationPatcher {
         return null;
     }
 
-
     private void saveRecalBoxDatabase() throws IOException, JAXBException {
         recalboxDatabase.saveToFile(recalBoxDatabaseFile);
     }
@@ -123,18 +110,11 @@ public class ConfigurationPatcher {
         System.out.println("Not fixed game count: "+operationLogger.getNotFixedGameCount());
         float percent = (float)(100*operationLogger.getFixedGameCount()) / (float)operationLogger.getTotalGameCount();
         System.out.println(String.format("%% of success : %.02f", percent));
-        System.out.println("Games without images: "+ operationLogger.getNoImageGameCount());
         
         
         if( operationLogger.hasNotFixedGame()) {
             System.err.println("Cannot found the following games in Hyperspin database:");
             operationLogger.getNotFixedGames().stream().forEach(n -> System.err.println(n));
-            System.err.println("-------------------------");            
-        }
-        
-        if( operationLogger.hasNoImageGames()) {
-            System.err.println("The following games have no images:");
-            operationLogger.getNoImageGames().stream().forEach(n -> System.err.println(n));
             System.err.println("-------------------------");            
         }
     }

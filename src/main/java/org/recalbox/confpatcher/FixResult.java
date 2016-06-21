@@ -9,7 +9,6 @@ public class FixResult implements FixOperationLogger {
 
     private Set<String> fixedRecalGames = new HashSet<>();
     private Set<String> notFixedGames = new HashSet<>();
-    private Set<String> noImageGames = new HashSet<>();
 
     @Override
     public void logGameFixed(String name) {
@@ -43,22 +42,5 @@ public class FixResult implements FixOperationLogger {
 
     public int getTotalGameCount() {
         return fixedRecalGames.size() + notFixedGames.size();
-    }
-
-    @Override
-    public void logImageNotFound(String nameFromPath) {
-        noImageGames.add(nameFromPath);
-    }
-
-    public boolean hasNoImageGames() {
-        return noImageGames.size() > 0;
-    }
-
-    public List<String> getNoImageGames() {
-        return noImageGames.stream().sorted().collect(toList());
-    }
-
-    public int getNoImageGameCount() {
-        return noImageGames.size();
     }
 }
