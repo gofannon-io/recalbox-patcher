@@ -15,6 +15,10 @@
  */
 package org.recalbox.confpatcher.hyperspin;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+
+import javax.xml.bind.JAXB;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
@@ -23,32 +27,36 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.stream.Collectors.*;
-
-import static java.util.function.Function.*;
-
-import javax.xml.bind.JAXB;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 public class HyperspinDatabase {
 
     private Map<String, HyperspinGame> nameToGame = new HashMap<>();
 
     public void loadFromFile(File file) throws IOException {
-        String rawXml = FileUtils.readFileToString(file, Charset.defaultCharset());
-        String xml = patch(rawXml);
-        HyperspinMenu menu = JAXB.unmarshal(new StringReader(xml), HyperspinMenu.class);
+        String rawXml = readFile(file);
+        String patchedXml = patch(rawXml);
+        HyperspinMenu menu = unmarshalMenu(patchedXml);
         //@formatter:off
         nameToGame = menu.getGameList().stream()
                 .collect(
                     toMap(
-                        g -> normalizedName(g), 
+                        HyperspinDatabase::normalizedName,
                         identity()
                          )
                         );
         //@formatter:on
+    }
+
+    private java.lang.String readFile(File file) throws IOException {
+        return FileUtils.readFileToString(file, Charset.defaultCharset());
+    }
+
+    private HyperspinMenu unmarshalMenu(String patchedXml) {
+        StringReader reader = new StringReader(patchedXml);
+        return JAXB.unmarshal(reader, HyperspinMenu.class);
     }
 
     private static String patch(String rawXml) {
@@ -64,6 +72,11 @@ public class HyperspinDatabase {
     }
     
     public List<String> getGameNames() {
-        return nameToGame.keySet().stream().sorted().collect(toList());
+        //@formatter:off
+        return nameToGame.keySet()
+                .stream()
+                .sorted()
+                .collect(toList());
+        //@formatter:on
     }
 }

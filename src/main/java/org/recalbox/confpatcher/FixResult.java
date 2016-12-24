@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 import static java.util.stream.Collectors.*;
 
-public class FixResult implements FixOperationLogger {
+public class FixResult implements OperationLogger {
 
     private Set<String> fixedRecalGames = new HashSet<>();
     private Set<String> notFixedGames = new HashSet<>();

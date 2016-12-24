@@ -23,7 +23,8 @@ class XmlPatcher {
         //@formatter:off
        return Pattern.compile(initialXml)
                .splitAsStream("(?=&)")
-               .map(XmlPatcher::fix).collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+               .map(XmlPatcher::fix)
+               .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
                .toString();
        //@formatter:on
     }

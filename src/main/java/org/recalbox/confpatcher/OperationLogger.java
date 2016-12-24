@@ -15,10 +15,21 @@
  */
 package org.recalbox.confpatcher;
 
-public interface FixOperationLogger {
+/**
+ * Logger for collecting application operations.
+ */
+public interface OperationLogger {
 
+    /**
+     * A game has been fixed
+     * @param name the name of the game, cannot be <code>null</code> nor empty
+     */
     void logGameFixed(String name);
 
+    /**
+     * A game is not found in the Hypersin database
+     * @param name the name of the game, cannot be <code>null</code> nor empty
+     */
     void logGameNotFoundInHypersinDatabase(String name);
 
 }
