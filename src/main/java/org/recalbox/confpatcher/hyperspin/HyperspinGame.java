@@ -27,7 +27,7 @@ public class HyperspinGame {
     private String manufacturer;
     private String developer;
     private String genre;
-    private String players;
+    private int players;
 
     public HyperspinGame() {
     }
@@ -101,11 +101,11 @@ public class HyperspinGame {
     }
 
     @XmlElement(name = "players", required = true)
-    public String getPlayers() {
+    public int getPlayers() {
         return players;
     }
 
-    public void setPlayers(String players) {
+    public void setPlayers(int players) {
         this.players = players;
     }
 

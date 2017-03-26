@@ -15,15 +15,15 @@
  */
 package org.recalbox.confpatcher;
 
-import java.io.File;
-import java.io.IOException;
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.io.FileUtils;
 import org.recalbox.confpatcher.hyperspin.HyperspinDatabase;
 import org.recalbox.confpatcher.hyperspin.HyperspinGame;
 import org.recalbox.confpatcher.recalbox.RecalboxDatabase;
 import org.recalbox.confpatcher.recalbox.RecalboxGame;
+
+import javax.xml.bind.JAXBException;
+import java.io.File;
+import java.io.IOException;
 
 public class ConfigurationPatcher {
     
@@ -92,12 +92,13 @@ public class ConfigurationPatcher {
         
         recalboxGame.setName(hyperspinGame.getDescription());
         recalboxGame.setDesc(hyperspinGame.getSynopsis());
-        recalboxGame.setReleasedate(hyperspinGame.getYear()+"0124T000000");
-        recalboxGame.setDeveloper(hyperspinGame.getManufacturer());
-        recalboxGame.setPublisher(hyperspinGame.getDeveloper());
+        recalboxGame.setReleaseDate(hyperspinGame.getYear()+"0124T000000");
+        recalboxGame.setDeveloper(hyperspinGame.getDeveloper());
+        recalboxGame.setPublisher(hyperspinGame.getManufacturer());
         recalboxGame.setGenre(hyperspinGame.getGenre());
-        recalboxGame.setPlayers(hyperspinGame.getPlayers());
-        
+        recalboxGame.setPlayCount(hyperspinGame.getPlayers());
+        recalboxGame.setLastPlayed("");
+
         operationLogger.logGameFixed(name);
     }
     
@@ -128,9 +129,9 @@ public class ConfigurationPatcher {
         
         
         if( operationLogger.hasNotFixedGame()) {
-            System.err.println("Cannot found the following games in Hyperspin database:");
-            operationLogger.getNotFixedGames().stream().forEach(n -> System.err.println(n));
-            System.err.println("-------------------------");            
+            System.out.println("Cannot found the following games in Hyperspin database:");
+            operationLogger.getNotFixedGames().stream().forEach(n -> System.out.println(n));
+            System.out.println("-------------------------");
         }
     }
 }

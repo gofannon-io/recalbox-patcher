@@ -25,11 +25,12 @@ public class RecalboxGame {
     private String desc;
     private String image;
     private String rating;
-    private String releasedate;
+    private String releaseDate;
     private String developer;
     private String publisher;
     private String genre;
-    private String players;
+    private int playCount;
+    private String lastPlayed;
     
     @XmlElement
     public String getPath() {
@@ -76,13 +77,13 @@ public class RecalboxGame {
         this.rating = rating;
     }
 
-    @XmlElement
-    public String getReleasedate() {
-        return releasedate;
+    @XmlElement(name = "releasedate")
+    public String getReleaseDate() {
+        return releaseDate;
     }
 
-    public void setReleasedate(String releasedate) {
-        this.releasedate = releasedate;
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
     }
 
     @XmlElement
@@ -111,16 +112,26 @@ public class RecalboxGame {
     public void setGenre(String genre) {
         this.genre = genre;
     }
-    
-    @XmlElement
-    public String getPlayers() {
-        return players;
+
+
+    @XmlElement(name = "playcount")
+    public int getPlayCount() {
+        return playCount;
     }
-    
-    public void setPlayers(String players) {
-        this.players = players;
+
+    public void setPlayCount(int playCount) {
+        this.playCount = playCount;
     }
-    
+
+    @XmlElement(name = "lastplayed")
+    public String getLastPlayed() {
+        return lastPlayed;
+    }
+
+    public void setLastPlayed(String lastPlayed) {
+        this.lastPlayed = lastPlayed;
+    }
+
     @XmlTransient
     public String getNameFromPath() {
         int index = path.lastIndexOf('/');
