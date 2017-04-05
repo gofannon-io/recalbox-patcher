@@ -15,6 +15,7 @@
  */
 package org.recalbox.confpatcher.recalbox;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -23,8 +24,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name="gameList")
 public class RecalboxGameList {
 
-    private List<RecalboxGame> gameList;
-    
+    private List<RecalboxGame> gameList = new ArrayList<>();
+
+    public RecalboxGameList() {
+    }
+
+    public RecalboxGameList(List<RecalboxGame> gameList) {
+        this.gameList = gameList;
+    }
+
     @XmlElement(name="game")
     public List<RecalboxGame> getGameList() {
         return gameList;
@@ -34,4 +42,8 @@ public class RecalboxGameList {
         this.gameList = gameList;
     }
 
+    public void add(RecalboxGame game) {
+        if( game != null && gameList != null)
+            gameList.add(game);
+    }
 }

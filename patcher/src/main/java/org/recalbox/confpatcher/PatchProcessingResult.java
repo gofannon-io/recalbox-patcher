@@ -20,42 +20,42 @@ import java.util.List;
 import java.util.Set;
 import static java.util.stream.Collectors.*;
 
-public class FixResult implements OperationLogger {
+public class PatchProcessingResult implements OperationLogger {
 
-    private Set<String> fixedRecalGames = new HashSet<>();
-    private Set<String> notFixedGames = new HashSet<>();
+    private Set<String> patchedRecalGames = new HashSet<>();
+    private Set<String> notPatchedGames = new HashSet<>();
 
     @Override
-    public void logGameFixed(String name) {
-        this.fixedRecalGames.add(name);
+    public void logGamePatched(String name) {
+        this.patchedRecalGames.add(name);
     }
 
     @Override
     public void logGameNotFoundInHypersinDatabase(String name) {
-        this.notFixedGames.add(name);
+        this.notPatchedGames.add(name);
     }
 
-    public List<String> getFixedRecalGame() {
-        return fixedRecalGames.stream().sorted().collect(toList());
+    public List<String> getPatchedRecalGame() {
+        return patchedRecalGames.stream().sorted().collect(toList());
     }
 
-    public List<String> getNotFixedGames() {
-        return notFixedGames.stream().sorted().collect(toList());
+    public List<String> getNotPatchedGames() {
+        return notPatchedGames.stream().sorted().collect(toList());
     }
 
     public boolean hasNotFixedGame() {
-        return notFixedGames.isEmpty() == false;
+        return notPatchedGames.isEmpty() == false;
     }
 
-    public int getFixedGameCount() {
-        return fixedRecalGames.size();
+    public int getPatchedGameCount() {
+        return patchedRecalGames.size();
     }
 
-    public int getNotFixedGameCount() {
-        return notFixedGames.size();
+    public int getNotPatchedGameCount() {
+        return notPatchedGames.size();
     }
 
     public int getTotalGameCount() {
-        return fixedRecalGames.size() + notFixedGames.size();
+        return patchedRecalGames.size() + notPatchedGames.size();
     }
 }

@@ -16,11 +16,13 @@
 package org.recalbox.confpatcher.hyperspin;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.xml.bind.JAXB;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -31,52 +33,19 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
-public class HyperspinDatabase {
+public interface HyperspinDatabase {
 
-    private Map<String, HyperspinGame> nameToGame = new HashMap<>();
 
-    public void loadFromFile(File file) throws IOException {
-        String rawXml = readFile(file);
-        String patchedXml = patch(rawXml);
-        HyperspinMenu menu = unmarshalMenu(patchedXml);
-        //@formatter:off
-        nameToGame = menu.getGameList().stream()
-                .collect(
-                    toMap(
-                        HyperspinDatabase::normalizedName,
-                        identity()
-                         )
-                        );
-        //@formatter:on
-    }
+    /**
+     * Get a game from its name
+     * @param name a game name
+     * @return the associated game or <code>null</code> if no game is found
+     */
+    HyperspinGame findByName(String name);
 
-    private java.lang.String readFile(File file) throws IOException {
-        return FileUtils.readFileToString(file, Charset.defaultCharset());
-    }
-
-    private HyperspinMenu unmarshalMenu(String patchedXml) {
-        StringReader reader = new StringReader(patchedXml);
-        return JAXB.unmarshal(reader, HyperspinMenu.class);
-    }
-
-    private static String patch(String rawXml) {
-        return XmlPatcher.fix(rawXml);
-    }
-    
-    private static String normalizedName(HyperspinGame game) {
-        return StringEscapeUtils.unescapeXml(game.getName());
-    }
-    
-    public HyperspinGame findByName(String name) {
-        return nameToGame.get(name);
-    }
-    
-    public List<String> getGameNames() {
-        //@formatter:off
-        return nameToGame.keySet()
-                .stream()
-                .sorted()
-                .collect(toList());
-        //@formatter:on
-    }
+    /**
+     * Get the list of all game names
+     * @return a non null list of game names
+     */
+    List<String> getGameNames();
 }

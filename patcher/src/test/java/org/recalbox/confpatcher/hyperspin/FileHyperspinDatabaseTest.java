@@ -25,23 +25,29 @@ import java.net.URL;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.recalbox.confpatcher.hyperspin.HyperspinDatabase;
 import org.recalbox.confpatcher.hyperspin.HyperspinGame;
 
-public class HyperspinDatabaseTest {
+import static org.recalbox.confpatcher.TestResourceHelper.*;
+
+public class FileHyperspinDatabaseTest {
 
     File hyperspinFile;
-    HyperspinDatabase database;
+    FileHyperspinDatabase database;
     HyperspinGame game;
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @Before
     public void setUp() throws Exception {
-        URL url = getClass().getResource("/Hyperspin Nintendo Entertainment System.xml");
-        URI uri = url.toURI();
-        hyperspinFile = new File(uri);
+        hyperspinFile = new File(folder.getRoot(), "hyperspin.xml");
+        createHyperspinFile(hyperspinFile);
 
-        database = new HyperspinDatabase();
+        database = new FileHyperspinDatabase();
     }
 
     @After

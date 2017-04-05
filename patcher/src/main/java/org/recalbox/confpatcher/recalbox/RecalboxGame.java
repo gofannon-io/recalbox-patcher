@@ -17,6 +17,7 @@ package org.recalbox.confpatcher.recalbox;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
+import static org.apache.commons.lang3.Validate.*;
 
 public class RecalboxGame {
 
@@ -31,7 +32,25 @@ public class RecalboxGame {
     private String genre;
     private int playCount;
     private String lastPlayed;
-    
+
+    public RecalboxGame() {
+    }
+
+    public RecalboxGame(RecalboxGame recalboxGame) {
+        notNull(recalboxGame,"recalboxGame argument shall not be null");
+        this.path = recalboxGame.path;
+        this.name = recalboxGame.name;
+        this.desc= recalboxGame.desc;
+        this.image = recalboxGame.image;
+        this.rating= recalboxGame.rating;
+        this.releaseDate = recalboxGame.releaseDate;
+        this.developer = recalboxGame.developer;
+        this.publisher = recalboxGame.publisher;
+        this.genre = recalboxGame.genre;
+        this.playCount = recalboxGame.playCount;
+        this.lastPlayed = recalboxGame.lastPlayed;
+    }
+
     @XmlElement
     public String getPath() {
         return path;
