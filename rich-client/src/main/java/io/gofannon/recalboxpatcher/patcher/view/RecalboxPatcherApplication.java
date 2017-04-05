@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.recalbox.confpatcher.view;
+package io.gofannon.recalboxpatcher.patcher.view;
 
 
 import javafx.application.Application;
@@ -26,7 +26,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class ConfPatcher extends Application {
+public class RecalboxPatcherApplication extends Application {
 
     public static void main(String[] args) {
         launch(args);
