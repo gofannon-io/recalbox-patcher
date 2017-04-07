@@ -18,10 +18,36 @@ package io.gofannon.recalboxpatcher.patcher;
 import io.gofannon.recalboxpatcher.patcher.hyperspin.HyperspinGame;
 import io.gofannon.recalboxpatcher.patcher.recalbox.RecalboxGame;
 
+/**
+ * Patcher of Recalbox games.
+ * <p>
+ * The patcher is based on the extraction of information from an Hyperspin game to complete the Recalbox game.
+ * </p>
+ * <pre>
+ *     Call {@link #setContext(GamePatchContext)} to initialize the instance.
+ *     Then call {@link #patch(RecalboxGame, HyperspinGame)} to patch each game
+ * </pre>
+ */
 public interface GamePatcher {
 
+    /**
+     * Set the context of the patch
+     * <p>
+     * The contxt contains all information required to patch a game
+     * </p>
+     *
+     * @param context a non null context
+     */
     void setContext(GamePatchContext context);
 
-    RecalboxGame patch(RecalboxGame recalboxGame, HyperspinGame hyperspinGame);
+    /**
+     * Patch a Recalbox game
+     *
+     * @param recalboxGame  the original Recalbox game to patch
+     * @param hyperspinGame the Hyperspin game containing
+     * @return a new instance of Recalbox
+     * @throws NullPointerException if an argument is null
+     */
+    RecalboxGame patch(RecalboxGame recalboxGame, HyperspinGame hyperspinGame) throws NullPointerException;
 
 }
