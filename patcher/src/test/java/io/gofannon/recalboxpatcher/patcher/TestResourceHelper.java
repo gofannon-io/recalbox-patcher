@@ -15,6 +15,7 @@
  */
 package io.gofannon.recalboxpatcher.patcher;
 
+import javafx.scene.image.Image;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.rules.TemporaryFolder;
@@ -80,11 +81,41 @@ public class TestResourceHelper {
         return createHyperspinFile(folder, "hyperspin.xml");
     }
 
-
     public static File createHyperspinFile(File parentDir, String filename) throws IOException {
         File tempFile = new File(parentDir, filename);
         createHyperspinFile(tempFile);
         return tempFile;
+    }
+
+    public static void addResourceToDirectory( String resourcePath, File directory ) throws IOException {
+        try(InputStream in = openResource(resourcePath)) {
+
+            String filename = extractResourceFilename(resourcePath);
+            File targetFile = new File(directory,filename);
+            FileUtils.copyInputStreamToFile(in, targetFile);
+
+        }
+    }
+
+    public static String extractResourceFilename(String resourcePath) {
+        if (resourcePath==null)
+            return null;
+
+        int lastPathSeparator = resourcePath.lastIndexOf('/');
+
+        if( lastPathSeparator<0)
+            return resourcePath;
+
+        if( lastPathSeparator == resourcePath.length()-1)
+            return "";
+
+        return resourcePath.substring(lastPathSeparator+1);
+    }
+
+    public static Image getImage(String resourcePath) throws Exception {
+        try( InputStream in = openResource(resourcePath); ) {
+            return new Image(in);
+        }
     }
 
 }

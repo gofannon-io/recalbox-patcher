@@ -13,86 +13,140 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package io.gofannon.recalboxpatcher.patcher;
 
+import io.gofannon.recalboxpatcher.patcher.patch.common.ChangeDirectoryPathPatcher;
+import io.gofannon.recalboxpatcher.patcher.patch.common.PathPatcher;
+import io.gofannon.recalboxpatcher.patcher.patch.database.DefaultGameDatabasePatcher;
+import io.gofannon.recalboxpatcher.patcher.processor.FileResourceProvider;
+import io.gofannon.recalboxpatcher.patcher.processor.GameDatabasePatchProcessor;
+import io.gofannon.recalboxpatcher.patcher.processor.PatchProcessingResult;
+
 import java.io.File;
-import java.util.ResourceBundle;
+import static org.apache.commons.lang3.Validate.*;
+
 
 /**
  * Simple command line application for patching a recalbox file
  */
 public class PatcherCLIApplication {
+//TODO test this with real data files
 
-    private static ResourceBundle messages = ResourceBundle.getBundle("CLIMessages");
+    private File sourceRecalboxFile;
+    private File hyperspinFile;
+    private File fixedRecalboxFile;
+    private File targetImageDirectory;
+    private PathPatcher imagePatchPatcher;
+    private GameDatabasePatchProcessor processor;
+    private ApplicationHandler applicationHandler = new NullApplicationHandler();
+
 
     public static void main(String... args ) {
-        if( args.length != 3) {
-            System.err.println("Invalid argument count");
-            printUsage();
-            System.exit(-1);
+        run(new SystemApplicationHandler(), args);
+    }
+
+    public static void run(ApplicationHandler applicationHandler, String... args) {
+        try {
+
+            PatcherCLIApplication application = new PatcherCLIApplication();
+            application.setApplicationHandler(applicationHandler);
+            application.setArguments(args);
+            application.initialize();
+            application.process();
+            applicationHandler.exitApplication();
+
+        } catch( ApplicationInterruptedException ex ) {
+            applicationHandler.exitApplicationOnFailure(ex);
+        }
+    }
+
+    private void setApplicationHandler(ApplicationHandler applicationHandler) {
+        notNull(applicationHandler, "applicationHandler is not defined");
+        this.applicationHandler = applicationHandler;
+    }
+
+    private void setArguments(String... args) {
+        // Check args
+        if( args.length != 4) {
+            applicationHandler.invalidArgumentCount();
         }
 
-        File sourceRecalboxFile = new File(args[0]);
+        sourceRecalboxFile = new File(args[0]);
         checkReadableFile( sourceRecalboxFile, "<original recalbox file>");
 
-        File hyperspinFile = new File(args[1]);
+        hyperspinFile = new File(args[1]);
         checkReadableFile( hyperspinFile, "<hyperspin file>");
 
-        File fixedRecalboxFile = new File(args[2]);
+        fixedRecalboxFile = new File(args[2]);
         checkGenerableFile( fixedRecalboxFile, "<target recalbox file>");
 
-        FileResourceProvider provider = new FileResourceProvider();
-        provider.setRecalboxDatabaseSourceFile(sourceRecalboxFile);
-        provider.setHyperspinDatabaseFile(hyperspinFile);
-        provider.setRecalboxDatabaseTargetFile(fixedRecalboxFile);
+//        targetImageDirectory = new File(args[3]);
+//        checkWritableDirectory(targetImageDirectory, "<target image directory>");
 
-        PatchProcessor processor = new PatchProcessor();
-        processor.setResourceProvider(provider);
-        PatchProcessingResult result =processor.process();
-
-        printResult(result);
-    }
-
-    private static void printUsage() {
-        System.out.println(messages.getString("usage"));
+        imagePatchPatcher = new ChangeDirectoryPathPatcher(args[3]);
     }
 
 
-    private static void checkReadableFile(File file, String documentedName) {
+    private void checkReadableFile(File file, String documentedName) {
         if( file.exists()==false) {
-            System.err.println("The "+documentedName+" does not exists");
-            System.exit(-2);
+            applicationHandler.argumentFileNotExists(documentedName);
         }
         if( file.isFile()==false) {
-            System.err.println("The "+documentedName+" is not a file");
-            System.exit(-3);
+            applicationHandler.argumentFileNotAFile(documentedName);
         }
         if( file.canRead()==false) {
-            System.err.println("The "+documentedName+" is not readable");
-            System.exit(-4);
+            applicationHandler.argumentFileNotReadable(documentedName);
         }
     }
 
-    private static void checkGenerableFile(File file, String documentedName) {
-        if( file.isFile()==false) {
-            System.err.println("The "+documentedName+" is not a file");
-            System.exit(-3);
+    private void checkWritableDirectory(File directory, String documentedName) {
+        if( directory.exists()==false) {
+            applicationHandler.argumentDirectoryNotExist(documentedName);
+        }
+
+        if( directory.isDirectory()==false) {
+            applicationHandler.argumentDirectoryNotADirectory(documentedName);
+        }
+
+        if( directory.canWrite()==false) {
+            applicationHandler.argumentDirectoryNotWritable(documentedName);
         }
     }
 
-    private static void printResult(PatchProcessingResult result) {
-        System.out.println("Fixed game count: "+ result.getPatchedGameCount());
-        System.out.println("Not fixed game count: "+ result.getNotPatchedGameCount());
-        float percent = (float)(100* result.getPatchedGameCount()) / (float) result.getTotalGameCount();
-        System.out.println(String.format("%% of success : %.02f", percent));
-
-
-        if( result.hasNotFixedGame()) {
-            System.out.println("Cannot found the following games in Hyperspin database:");
-            result.getNotPatchedGames().stream().forEach(n -> System.out.println(n));
-            System.out.println("-------------------------");
+    private void checkGenerableFile(File file, String documentedName) {
+        if( file.exists()==true) {
+            applicationHandler.argumentGenerableFileNotExists(documentedName);
         }
+
+        File parentFile = file.getParentFile();
+
+        if( parentFile.exists()==false) {
+            applicationHandler.argumentGenerableFileParentDirectoryNotExist(documentedName);
+        }
+
+        if( parentFile.canWrite()==false) {
+            applicationHandler.argumentGenerableFileParentDirectoryNotWritable(documentedName);
+        }
+    }
+
+    private void initialize() {
+        FileResourceProvider resourceProvider = new FileResourceProvider();
+        resourceProvider.setInputRecalboxDatabaseFile(sourceRecalboxFile);
+        resourceProvider.setInputHyperspinDatabaseFile(hyperspinFile);
+        resourceProvider.setOutputRecalboxDatabaseFile(fixedRecalboxFile);
+        resourceProvider.setImagePathPatcher(imagePatchPatcher);
+
+        DefaultGameDatabasePatcher gamePatcher = new DefaultGameDatabasePatcher();
+        gamePatcher.setImagePathPatcher(imagePatchPatcher);
+
+        processor = new GameDatabasePatchProcessor();
+        processor.setResourceProvider(resourceProvider);
+        processor.setGamePatcher(gamePatcher);
+    }
+
+    private void process() {
+        PatchProcessingResult result = processor.process();
+        applicationHandler.displayResult(result);
     }
 
 }

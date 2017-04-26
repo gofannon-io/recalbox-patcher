@@ -24,9 +24,6 @@ import java.io.File;
 import static io.gofannon.recalboxpatcher.patcher.TestResourceHelper.*;
 import static org.assertj.core.api.Assertions.*;
 
-/**
- * Created by gwen on 28/03/17.
- */
 public class TestResourceHelperTest {
 
     @Rule
