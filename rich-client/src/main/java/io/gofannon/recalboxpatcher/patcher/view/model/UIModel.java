@@ -34,6 +34,11 @@ public class UIModel {
     private StringProperty imageExtension;
     private final String[] imageFileExtensionList = {"jpg", "png", "gif"};
 
+    private BooleanProperty notFoundOption;
+    private BooleanProperty upperCaseOption;
+    private BooleanProperty newFileOption;
+    private BooleanProperty addNameOption;
+
     public UIModel() {
         inputRecalboxFile = new SimpleStringProperty(null,"inputRecalboxFile", null);
         inputHyperspinFile = new SimpleStringProperty(null,"inputHyperspinFile", null);
@@ -45,6 +50,11 @@ public class UIModel {
         widthImage = new SimpleIntegerProperty(null, "imageWidth", 100);
         heightImage = new SimpleIntegerProperty(null, "imageHeight", 100);
         imageExtension = new SimpleStringProperty(null,"imageExtension", "jpg");
+
+        notFoundOption = new SimpleBooleanProperty(null, "notFoundOption", false);
+        upperCaseOption = new SimpleBooleanProperty(null, "upperCaseOption", false);
+        newFileOption = new SimpleBooleanProperty(null, "newFileOption", false);
+        addNameOption = new SimpleBooleanProperty(null, "addNameOption", true);
     }
 
     public StringProperty inputRecalboxFileProperty() {
@@ -106,5 +116,21 @@ public class UIModel {
 
     public String[] getImageFileExtensionList() {
         return imageFileExtensionList;
+    }
+
+    public BooleanProperty notFoundOptionProperty() {
+        return notFoundOption;
+    }
+
+    public BooleanProperty upperCaseOptionProperty() {
+        return upperCaseOption;
+    }
+
+    public BooleanProperty newFileOptionProperty() {
+        return newFileOption;
+    }
+
+    public BooleanProperty addNameOptionProperty() {
+        return addNameOption;
     }
 }

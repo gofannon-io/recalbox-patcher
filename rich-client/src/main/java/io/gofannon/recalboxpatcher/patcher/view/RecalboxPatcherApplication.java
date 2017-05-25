@@ -34,6 +34,7 @@ public class RecalboxPatcherApplication extends Application {
 
     private Pane scrapperPane;
     private Pane imagePane;
+    private Pane optionPane;
 
     private Stage stage;
 
@@ -51,6 +52,7 @@ public class RecalboxPatcherApplication extends Application {
 
         scrapperPane = createPane(ScrapperPaneHandler.class);
         imagePane = createPane(ImagePaneHandler.class);
+        optionPane = createPane(OptionPaneHandler.class);
 
         Scene scene = createScene();
         stage.setScene(scene);
@@ -68,7 +70,7 @@ public class RecalboxPatcherApplication extends Application {
             paneHandler.initialize(this.stage, this.model);
             return paneHandler.getPane();
 
-        } catch( InstantiationException | IllegalAccessException ex) {
+        } catch (InstantiationException | IllegalAccessException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -76,11 +78,13 @@ public class RecalboxPatcherApplication extends Application {
     private Scene createScene() {
         TitledPane scrapperPane = createTitledPane("Scrapper", this.scrapperPane);
         TitledPane imagePane = createTitledPane("Images", this.imagePane);
+        TitledPane optionPane = createTitledPane("Options", this.optionPane);
         Pane controlPane = createControlPane();
 
         VBox rootPane = new VBox(
                 scrapperPane,
                 imagePane,
+                optionPane,
                 controlPane);
         rootPane.setPadding(new Insets(10, 10, 10, 10));
         rootPane.setFillWidth(true);
