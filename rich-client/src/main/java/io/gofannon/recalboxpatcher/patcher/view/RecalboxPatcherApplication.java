@@ -16,72 +16,119 @@
 package io.gofannon.recalboxpatcher.patcher.view;
 
 
+import io.gofannon.recalboxpatcher.patcher.view.model.UIModel;
+import io.gofannon.recalboxpatcher.patcher.view.utils.NotImplemented;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Optional;
+
+import static io.gofannon.recalboxpatcher.patcher.view.WidgetFactory.createButton;
 
 public class RecalboxPatcherApplication extends Application {
+
+    private ScrapperPaneHandler scrapperPaneHandler;
+    private ImagePaneHandler imagePaneHandler;
+
+    private Stage stage;
+
+    private UIModel model;
 
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
-    public void start(Stage primaryStage) {
-        Scene scene = new Scene(new VBox(), 400, 350);
-        scene.setFill(Color.OLDLACE);
+    public void start(Stage stage) {
+        this.stage = stage;
 
-        MenuBar menuBar = new MenuBar();
+        this.model = new UIModel();
 
-        Menu fileMenu = new Menu();
-        fileMenu.setText("_File");
+        scrapperPaneHandler = new ScrapperPaneHandler(this.stage, model);
+        imagePaneHandler = new ImagePaneHandler(this.stage, model);
 
-        MenuItem newMenuItem = new MenuItem(("_New..."));
+        Scene scene = createScene();
+        stage.setScene(scene);
 
+        stage.setTitle("Recalbox patcher configuration");
+        stage.setOnCloseRequest(this::onCloseRequest);
 
-        MenuItem exitMenuItem = new MenuItem("E_xit");
-        exitMenuItem.setAccelerator(KeyCombination.valueOf("ctrl+x"));
-        exitMenuItem.setOnAction(this::exitApplication);
-
-
-        fileMenu.getItems().addAll(newMenuItem, new SeparatorMenuItem(), exitMenuItem);
-
-        menuBar.getMenus().add(fileMenu);
-
-
-
-        ((VBox) scene.getRoot()).getChildren().addAll(menuBar);
-
-
-        primaryStage.setWidth(800);
-        primaryStage.setHeight(600);
-        primaryStage.setTitle("A fabulous application");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        stage.show();
     }
 
-    private void defineScrapperPanel(Stage primaryStage) {
-        VBox vbox = new VBox();
-        Label label = new Label();
-        label.setText("Chemin des noms à scrapper");
-        vbox.getChildren().add(label);
+    private Scene createScene() {
+        TitledPane scrapperPane = createTitledPane("Scrapper", scrapperPaneHandler.getPane());
 
 
-        HBox hboxScrapper = new HBox();
-        TextField fieldScapper = new TextField();
-        Button setScrapperFileButton = new Button();
+        TitledPane imagePane = createTitledPane("Images", imagePaneHandler.getPane());
 
 
+
+        Pane controlPane = createControlPane();
+
+        VBox rootPane = new VBox(
+                scrapperPane,
+                imagePane,
+                controlPane);
+        rootPane.setPadding(new Insets(10, 10, 10, 10));
+        rootPane.setFillWidth(true);
+        rootPane.setSpacing(15);
+
+        return new Scene(rootPane);
     }
 
-    public void exitApplication(ActionEvent e) {
-        System.out.println("By bye");
-        System.exit(0);
+    private TitledPane createTitledPane(String text, Node content) {
+        TitledPane titledPane = new TitledPane();
+        titledPane.setCollapsible(false);
+        titledPane.setText(text);
+        titledPane.setContent(content);
+        return titledPane;
     }
+
+    private Pane createControlPane() {
+        Button saveButton = createButton("Enregistrer", this::onSave);
+        Button exitButton = createButton("Quitter", this::onExit);
+
+        HBox buttonBox = new HBox(saveButton, exitButton);
+        buttonBox.setSpacing(25);
+        buttonBox.setAlignment(Pos.BASELINE_CENTER);
+        buttonBox.setPadding(new Insets(0, 5, 5, 5));
+
+        return buttonBox;
+    }
+
+
+    private void onSave(ActionEvent event) {
+        NotImplemented.displayNotImplementedDialog();
+    }
+
+    private void onExit(ActionEvent event) {
+        if (userConfirmApplicationExit())
+            stage.hide();
+    }
+
+    private boolean userConfirmApplicationExit() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                "Voulez-vous quitter l'application ?",
+                ButtonType.YES, ButtonType.NO);
+        Optional<ButtonType> response = alert.showAndWait();
+        return response.isPresent() && response.get() == ButtonType.YES;
+    }
+
+    private void onCloseRequest(WindowEvent windowEvent) {
+        if (userConfirmApplicationExit() == false)
+            windowEvent.consume();
+    }
+
 }
