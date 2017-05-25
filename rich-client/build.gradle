@@ -15,16 +15,30 @@
  */
 
 apply plugin: 'java'
+apply plugin: 'application'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+mainClassName="io.gofannon.recalboxpatcher.patcher.view.RecalboxPatcherApplication"
 
 version = '0.1'
 jar {
     manifest {
         attributes 'Implementation-Title': 'RecalBox Patcher RichClient',
-                   'Implementation-Version': version
+                   'Implementation-Version': version,
+                   'Main-Class': mainClassName
+
+    }
+
+
+    from {
+        List<File> allFiles = new ArrayList<>();
+        configurations.compile.collect {
+            allFiles.addAll( zipTree(it).getAt("asFileTrees") )
+        }
+
+        allFiles
     }
 }
 
@@ -39,5 +53,3 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.6.2'
 }
-
-
