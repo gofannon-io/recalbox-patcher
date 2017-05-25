@@ -16,7 +16,9 @@
 
 package io.gofannon.recalboxpatcher.patcher.view;
 
+import com.sun.javafx.binding.BidirectionalBinding;
 import io.gofannon.recalboxpatcher.patcher.view.model.UIModel;
+import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -40,6 +42,8 @@ class ImagePaneHandler implements PaneHandler {
     private ComboBox<String> imageFileExtensionController;
 
     private Pane pane;
+    private ObjectProperty<Integer> imageWidthBiDir;
+    private ObjectProperty<Integer> imageHeightBiDir;
 
 
     @Override
@@ -60,12 +64,13 @@ class ImagePaneHandler implements PaneHandler {
         inputImageDirectoryTextField.textProperty().bind(model.inputImageDirectoryProperty());
         outputImageDirectoryTextField.textProperty().bind(model.outputImageDirectoryProperty());
 
-        imageWidthController.getValueFactory().valueProperty().bindBidirectional(
-                model.widthImageProperty().asObject()
-        );
-        imageHeightController.getValueFactory().valueProperty().bindBidirectional(
-                model.heightImageProperty().asObject()
-        );
+        imageWidthBiDir = model.widthImageProperty().asObject();
+        imageWidthController.getValueFactory().valueProperty().bindBidirectional(imageWidthBiDir);
+
+
+        imageHeightBiDir = model.heightImageProperty().asObject();
+        imageHeightController.getValueFactory().valueProperty().bindBidirectional(imageHeightBiDir);
+
         imageFileExtensionController.valueProperty().bindBidirectional(model.imageExtensionProperty());
     }
 
