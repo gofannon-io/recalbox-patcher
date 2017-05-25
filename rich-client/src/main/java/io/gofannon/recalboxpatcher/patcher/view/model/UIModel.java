@@ -31,6 +31,8 @@ public class UIModel {
 
     private IntegerProperty widthImage;
     private IntegerProperty heightImage;
+    private StringProperty imageExtension;
+    private final String[] imageFileExtensionList = {"jpg", "png", "gif"};
 
     public UIModel() {
         inputRecalboxFile = new SimpleStringProperty(null,"inputRecalboxFile", null);
@@ -42,6 +44,7 @@ public class UIModel {
 
         widthImage = new SimpleIntegerProperty(null, "imageWidth", 100);
         heightImage = new SimpleIntegerProperty(null, "imageHeight", 100);
+        imageExtension = new SimpleStringProperty(null,"imageExtension", "jpg");
     }
 
     public StringProperty inputRecalboxFileProperty() {
@@ -95,5 +98,13 @@ public class UIModel {
 
     public File getOutputImageDirectory() {
         return toFile(outputImageDirectory);
+    }
+
+    public StringProperty imageExtensionProperty() {
+        return imageExtension;
+    }
+
+    public String[] getImageFileExtensionList() {
+        return imageFileExtensionList;
     }
 }

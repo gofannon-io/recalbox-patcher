@@ -17,19 +17,17 @@
 package io.gofannon.recalboxpatcher.patcher.view;
 
 import io.gofannon.recalboxpatcher.patcher.view.model.UIModel;
-import io.gofannon.recalboxpatcher.patcher.view.utils.NotImplemented;
-import javafx.beans.property.Property;
 import javafx.event.ActionEvent;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.TextField;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
-public class ImagePaneHandler {
+class ImagePaneHandler {
 
     private Window ownerWindow;
     private UIModel model;
@@ -39,6 +37,7 @@ public class ImagePaneHandler {
 
     private Spinner<Integer> imageHeightController;
     private Spinner<Integer> imageWidthController;
+    private ComboBox<String> imageFileExtensionController;
 
     private Pane pane;
 
@@ -49,7 +48,6 @@ public class ImagePaneHandler {
 
         Pane directoryPane = createDirectoryPane();
         Pane imageSizePane = createImageSizePane();
-        createImageTypePane();
 
         VBox rootPane = new VBox(
                 directoryPane,
@@ -67,6 +65,7 @@ public class ImagePaneHandler {
         imageHeightController.getValueFactory().valueProperty().bindBidirectional(
                 model.heightImageProperty().asObject()
         );
+        imageFileExtensionController.valueProperty().bindBidirectional(model.imageExtensionProperty());
     }
 
     private Pane createDirectoryPane() {
@@ -100,34 +99,50 @@ public class ImagePaneHandler {
 
 
     private Pane createImageSizePane() {
-        //SpinnerValueFactory factory= new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 500);
-        imageHeightController = new Spinner<>(10,500,200);
-        imageHeightController.setPrefWidth(100.);
-        imageWidthController = new Spinner<>(10,500,200);
-        imageWidthController.setPrefWidth(100.);
+        imageHeightController = createImageSizeSpinner();
+        imageWidthController = createImageSizeSpinner();
+        imageFileExtensionController = createImageFileExtensionComboBox();
 
-        VBox heightPane = new VBox(
-                new Label("Height"),
-                imageHeightController
-        );
-        heightPane.setSpacing(5);
 
-        VBox widthPane = new VBox(
-                new Label("Width"),
-                imageWidthController
-        );
-        widthPane.setSpacing(5);
+        Pane heightPane = createLabeledControl("Height", imageHeightController);
+        Pane widthPane = createLabeledControl("Width", imageWidthController);
+        Pane fileExtensionPane = createLabeledControl("Extension", imageFileExtensionController);
 
-        HBox imageSizePane = new HBox(heightPane, widthPane);
-        imageSizePane.setSpacing(10.);
+        HBox imageSizePane = new HBox(
+                heightPane,
+                widthPane,
+                fileExtensionPane
+                );
+        imageSizePane.setSpacing(20.);
+        imageSizePane.setAlignment(Pos.CENTER);
+        imageSizePane.setPadding(new Insets(-5,0,0,0));
+
         return imageSizePane;
     }
 
-    private void createImageTypePane() {
-
+    private static Spinner<Integer> createImageSizeSpinner() {
+        Spinner<Integer> spinner = new Spinner<>(10,500,200);
+        spinner.setPrefWidth(70.);
+        return spinner;
     }
 
-    public Pane getPane() {
+    private ComboBox<String> createImageFileExtensionComboBox() {
+        ComboBox<String> comboBox = new ComboBox<>();
+        comboBox.getItems().addAll(model.getImageFileExtensionList());
+        return comboBox;
+    }
+
+    private static Pane createLabeledControl(String labelText, Node node) {
+        HBox pane = new HBox(
+                new Label(labelText),
+                node
+        );
+        pane.setSpacing(5);
+        pane.setAlignment(Pos.BASELINE_LEFT);
+        return pane;
+    }
+
+    Pane getPane() {
         return pane;
     }
 }
