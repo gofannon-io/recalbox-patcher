@@ -27,7 +27,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
 
-class ImagePaneHandler {
+class ImagePaneHandler implements PaneHandler {
 
     private Window ownerWindow;
     private UIModel model;
@@ -42,7 +42,8 @@ class ImagePaneHandler {
     private Pane pane;
 
 
-    public ImagePaneHandler(Window ownerWindow, UIModel model) {
+    @Override
+    public void initialize (Window ownerWindow, UIModel model) {
         this.ownerWindow = ownerWindow;
         this.model = model;
 
@@ -67,6 +68,7 @@ class ImagePaneHandler {
         );
         imageFileExtensionController.valueProperty().bindBidirectional(model.imageExtensionProperty());
     }
+
 
     private Pane createDirectoryPane() {
         return new FileSelectionPaneBuilder()
@@ -102,7 +104,6 @@ class ImagePaneHandler {
         imageHeightController = createImageSizeSpinner();
         imageWidthController = createImageSizeSpinner();
         imageFileExtensionController = createImageFileExtensionComboBox();
-
 
         Pane heightPane = createLabeledControl("Height", imageHeightController);
         Pane widthPane = createLabeledControl("Width", imageWidthController);
@@ -142,7 +143,8 @@ class ImagePaneHandler {
         return pane;
     }
 
-    Pane getPane() {
+    @Override
+    public Pane getPane() {
         return pane;
     }
 }

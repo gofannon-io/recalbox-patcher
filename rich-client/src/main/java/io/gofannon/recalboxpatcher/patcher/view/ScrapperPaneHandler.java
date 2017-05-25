@@ -27,7 +27,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
-public class ScrapperPaneHandler {
+class ScrapperPaneHandler implements PaneHandler {
 
     private UIModel model;
 
@@ -39,7 +39,8 @@ public class ScrapperPaneHandler {
     private TextField outputRecalboxFileTextField;
 
 
-    public ScrapperPaneHandler(Window ownerWindow, UIModel model) {
+    @Override
+    public void initialize (Window ownerWindow, UIModel model) {
         this.ownerWindow = ownerWindow;
         this.model = model;
 
@@ -64,6 +65,7 @@ public class ScrapperPaneHandler {
                 .build();
     }
 
+    @Override
     public Pane getPane() {
         return this.pane;
     }

@@ -20,26 +20,20 @@ import io.gofannon.recalboxpatcher.patcher.view.model.UIModel;
 import io.gofannon.recalboxpatcher.patcher.view.utils.NotImplemented;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Scene;
+import javafx.geometry.*;
+import javafx.scene.*;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
+import javafx.stage.*;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Optional;
 
 import static io.gofannon.recalboxpatcher.patcher.view.WidgetFactory.createButton;
 
 public class RecalboxPatcherApplication extends Application {
 
-    private ScrapperPaneHandler scrapperPaneHandler;
-    private ImagePaneHandler imagePaneHandler;
+    private Pane scrapperPane;
+    private Pane imagePane;
 
     private Stage stage;
 
@@ -55,8 +49,8 @@ public class RecalboxPatcherApplication extends Application {
 
         this.model = new UIModel();
 
-        scrapperPaneHandler = new ScrapperPaneHandler(this.stage, model);
-        imagePaneHandler = new ImagePaneHandler(this.stage, model);
+        scrapperPane = createPane(ScrapperPaneHandler.class);
+        imagePane = createPane(ImagePaneHandler.class);
 
         Scene scene = createScene();
         stage.setScene(scene);
@@ -67,14 +61,21 @@ public class RecalboxPatcherApplication extends Application {
         stage.show();
     }
 
+    private Pane createPane(Class<? extends PaneHandler> paneHandlerClass) {
+        try {
+
+            PaneHandler paneHandler = paneHandlerClass.newInstance();
+            paneHandler.initialize(this.stage, this.model);
+            return paneHandler.getPane();
+
+        } catch( InstantiationException | IllegalAccessException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
     private Scene createScene() {
-        TitledPane scrapperPane = createTitledPane("Scrapper", scrapperPaneHandler.getPane());
-
-
-        TitledPane imagePane = createTitledPane("Images", imagePaneHandler.getPane());
-
-
-
+        TitledPane scrapperPane = createTitledPane("Scrapper", this.scrapperPane);
+        TitledPane imagePane = createTitledPane("Images", this.imagePane);
         Pane controlPane = createControlPane();
 
         VBox rootPane = new VBox(
