@@ -39,6 +39,8 @@ public class UIModel {
     private BooleanProperty newFileOption;
     private BooleanProperty addNameOption;
 
+    private StringProperty operationLog;
+
     public UIModel() {
         inputRecalboxFile = new SimpleStringProperty(null,"inputRecalboxFile", null);
         inputHyperspinFile = new SimpleStringProperty(null,"inputHyperspinFile", null);
@@ -55,6 +57,19 @@ public class UIModel {
         upperCaseOption = new SimpleBooleanProperty(null, "upperCaseOption", false);
         newFileOption = new SimpleBooleanProperty(null, "newFileOption", false);
         addNameOption = new SimpleBooleanProperty(null, "addNameOption", true);
+
+        operationLog = new SimpleStringProperty(null, "operationsLog", null);
+
+        generateDummyLog();
+    }
+
+    private void generateDummyLog() {
+        StringBuffer buffer = new StringBuffer();
+        for( int i=0; i<1200; i++){
+            buffer.append("Line ").append(i).append("\n");
+        }
+        buffer.append("Line 1200");
+        operationLog.setValue(buffer.toString());
     }
 
     public StringProperty inputRecalboxFileProperty() {
@@ -132,5 +147,9 @@ public class UIModel {
 
     public BooleanProperty addNameOptionProperty() {
         return addNameOption;
+    }
+
+    public StringProperty operationLogProperty() {
+        return operationLog;
     }
 }

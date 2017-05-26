@@ -107,10 +107,11 @@ public class RecalboxPatcherApplication extends Application {
     }
 
     private Pane createControlPane() {
+        Button logButton = createButtonWithBundle("application.log", this::onLog);
         Button saveButton = createButtonWithBundle("application.save", this::onSave);
         Button exitButton = createButtonWithBundle("application.exit", this::onExit);
 
-        HBox buttonBox = new HBox(saveButton, exitButton);
+        HBox buttonBox = new HBox(logButton, saveButton, exitButton);
         buttonBox.setSpacing(25);
         buttonBox.setAlignment(Pos.BASELINE_CENTER);
         buttonBox.setPadding(new Insets(0, 5, 5, 5));
@@ -118,6 +119,28 @@ public class RecalboxPatcherApplication extends Application {
         return buttonBox;
     }
 
+    private void onLog(ActionEvent event) {
+//        ButtonType loginButtonType = new ButtonType("Login", ButtonData.OK_DONE);
+//        Dialog<String> dialog = new Dialog<>();
+//        dialog.getDialogPane().getButtonTypes().add(loginButtonType);
+//        boolean disabled = false; // computed based on content of text fields, for example
+//        dialog.getDialogPane().lookupButton(loginButtonType).setDisable(disabled);
+
+
+        Dialog<Void> dialog = new Dialog();
+
+        final String title = resourceBundle.getString("logDialog.title");
+        dialog.setTitle(title);
+
+        LogDialogHandler logDialogPane = new LogDialogHandler();
+        logDialogPane.initialize(dialog, model);
+        dialog.getDialogPane().setContent(logDialogPane.getPane() );
+
+        dialog.setWidth(500);
+        dialog.setHeight(500);
+
+        dialog.showAndWait();
+    }
 
     private void onSave(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
