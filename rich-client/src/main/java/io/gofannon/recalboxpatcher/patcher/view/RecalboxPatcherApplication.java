@@ -25,6 +25,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -120,51 +122,44 @@ public class RecalboxPatcherApplication extends Application {
     }
 
     private void onLog(ActionEvent event) {
-//        ButtonType loginButtonType = new ButtonType("Login", ButtonData.OK_DONE);
-//        Dialog<String> dialog = new Dialog<>();
-//        dialog.getDialogPane().getButtonTypes().add(loginButtonType);
-//        boolean disabled = false; // computed based on content of text fields, for example
-//        dialog.getDialogPane().lookupButton(loginButtonType).setDisable(disabled);
-
-
         Dialog<Void> dialog = new Dialog();
-
-        final String title = resourceBundle.getString("logDialog.title");
-        dialog.setTitle(title);
 
         LogDialogHandler logDialogPane = new LogDialogHandler();
         logDialogPane.initialize(dialog, model);
-        dialog.getDialogPane().setContent(logDialogPane.getPane() );
-
-        dialog.setWidth(500);
-        dialog.setHeight(500);
 
         dialog.showAndWait();
     }
 
     private void onSave(ActionEvent event) {
+        List<String> log = createDummyLog();
+        StringBuilder content = new StringBuilder();
+        log.forEach( l -> content.append(l).append("\n"));
+        content.deleteCharAt(content.length()-1);
+
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Génération du fichier");
         alert.setHeaderText("Désolé, le générateur de fichier n'est pas encore intégré.");
-
-        String content = new StringBuilder()
-                .append("Fichier d'entrée Recalbox: ").append(model.inputRecalboxFileProperty().getValue()).append("\n")
-                .append("Fichier d'entrée Hyperspin: ").append(model.inputHyperspinFileProperty().getValue()).append("\n")
-                .append("Fichier de sortie Recalbox: ").append(model.outputRecalboxFileProperty().getValue()).append("\n")
-                .append("Chemin des fichiers à télécharger: ").append(model.inputImageDirectoryProperty().getValue()).append("\n")
-                .append("Chemin des images dans le fichier: ").append(model.outputImageDirectoryProperty().getValue()).append("\n")
-                .append("Hauteur des images: ").append(model.heightImageProperty().getValue()).append("\n")
-                .append("Largeur des images: ").append(model.widthImageProperty().getValue()).append("\n")
-                .append("Extension des images: ").append(model.imageExtensionProperty().getValue()).append("\n")
-                .append("Option 'Non trouvée' activée: ").append(model.notFoundOptionProperty().getValue()).append("\n")
-                .append("Option 'Majuscule' activée: ").append(model.upperCaseOptionProperty().getValue()).append("\n")
-                .append("Option 'Nouveau Fichier' activée: ").append(model.newFileOptionProperty().getValue()).append("\n")
-                .append("Option 'Ajout de nom' activée: ").append(model.addNameOptionProperty().getValue())
-                .toString();
-
-        alert.setContentText(content);
-
+        alert.setContentText(content.toString());
         alert.showAndWait();
+
+        model.replaceLog(log);
+    }
+
+    private List<String> createDummyLog() {
+        List<String> logs = new ArrayList<>();
+        logs.add("Fichier d'entrée Recalbox: "+model.inputRecalboxFileProperty().getValue());
+        logs.add("Fichier d'entrée Hyperspin: "+model.inputHyperspinFileProperty().getValue());
+        logs.add("Fichier de sortie Recalbox: "+model.outputRecalboxFileProperty().getValue());
+        logs.add("Chemin des fichiers à télécharger: "+model.inputImageDirectoryProperty().getValue());
+        logs.add("Chemin des images dans le fichier: "+model.outputImageDirectoryProperty().getValue());
+        logs.add("Hauteur des images: "+model.heightImageProperty().getValue());
+        logs.add("Largeur des images: "+model.widthImageProperty().getValue());
+        logs.add("Extension des images: "+model.imageExtensionProperty().getValue());
+        logs.add("Option 'Non trouvée' activée: "+model.notFoundOptionProperty().getValue());
+        logs.add("Option 'Majuscule' activée: "+model.upperCaseOptionProperty().getValue());
+        logs.add("Option 'Nouveau Fichier' activée: "+model.newFileOptionProperty().getValue());
+        logs.add("Option 'Ajout de nom' activée: "+model.addNameOptionProperty().getValue());
+        return logs;
     }
 
     private void onExit(ActionEvent event) {

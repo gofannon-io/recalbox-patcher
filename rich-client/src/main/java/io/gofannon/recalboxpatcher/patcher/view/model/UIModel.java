@@ -26,6 +26,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class UIModel {
 
@@ -70,17 +73,6 @@ public class UIModel {
         addNameOption = new SimpleBooleanProperty(null, "addNameOption", true);
 
         operationLog = new SimpleStringProperty(null, "operationsLog", null);
-
-        generateDummyLog();
-    }
-
-    private void generateDummyLog() {
-        StringBuffer buffer = new StringBuffer();
-        for( int i=0; i<1200; i++){
-            buffer.append("Line ").append(i).append("\n");
-        }
-        buffer.append("Line 1200");
-        operationLog.setValue(buffer.toString());
     }
 
     private void computeOutputImageRelativeDirectory(Observable observable) {
@@ -192,5 +184,10 @@ public class UIModel {
 
     public StringProperty operationLogProperty() {
         return operationLog;
+    }
+
+    public void replaceLog(List<String> lines) {
+        String buffer = String.join("\n", lines.toArray(new String[0]));
+        operationLog.setValue(buffer);
     }
 }

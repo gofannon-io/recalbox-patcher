@@ -20,6 +20,7 @@ package io.gofannon.recalboxpatcher.patcher.view;
 import io.gofannon.recalboxpatcher.patcher.view.model.UIModel;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -34,42 +35,19 @@ class LogDialogHandler  {
 
     private final ResourceBundle resourceBundle = ResourceBundle.getBundle("view");
 
-    private UIModel model;
-    private Dialog<Void> dialog;
-
-    private TextArea textArea;
-    private Pane pane;
-
-
     public void initialize(Dialog<Void> dialog, UIModel model) {
-        this.dialog = dialog;
-        this.model = model;
-
-        textArea = new TextArea();
+        TextArea textArea = new TextArea();
+        textArea.setPrefRowCount(30);
         textArea.textProperty().bind(model.operationLogProperty());
 
-        BorderPane borderPane = new BorderPane();
-        borderPane.setCenter(textArea);
-
-
+        dialog.getDialogPane().setContent(textArea);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
 
 
-        this.pane = borderPane;
+        final String title = resourceBundle.getString("logDialog.title");
+        dialog.setTitle(title);
+
+        dialog.setResizable(true);
     }
-
-
-    private void onClear(ActionEvent event) {
-
-    }
-
-    private void onClose(ActionEvent event) {
-        System.out.println("Close");
-    }
-
-    public Pane getPane() {
-        return pane;
-    }
-
 
 }
