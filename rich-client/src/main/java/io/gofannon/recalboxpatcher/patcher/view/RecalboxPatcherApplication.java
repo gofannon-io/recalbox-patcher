@@ -16,6 +16,7 @@
 package io.gofannon.recalboxpatcher.patcher.view;
 
 
+import io.gofannon.recalboxpatcher.patcher.view.model.DefaultUIModel;
 import io.gofannon.recalboxpatcher.patcher.view.model.UIModel;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -42,7 +43,7 @@ public class RecalboxPatcherApplication extends Application {
 
     private Stage stage;
 
-    private UIModel model;
+    private UIModel model = new DefaultUIModel();
 
     public static void main(String[] args) {
         launch(args);
@@ -51,8 +52,6 @@ public class RecalboxPatcherApplication extends Application {
     @Override
     public void start(Stage stage) {
         this.stage = stage;
-
-        this.model = new UIModel();
 
         scrapperPane = createPane(ScrapperPaneHandler.class);
         imagePane = createPane(ImagePaneHandler.class);
@@ -132,14 +131,12 @@ public class RecalboxPatcherApplication extends Application {
 
     private void onSave(ActionEvent event) {
         List<String> log = createDummyLog();
-        StringBuilder content = new StringBuilder();
-        log.forEach( l -> content.append(l).append("\n"));
-        content.deleteCharAt(content.length()-1);
+        String content = String.join("\n",log);
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Génération du fichier");
         alert.setHeaderText("Désolé, le générateur de fichier n'est pas encore intégré.");
-        alert.setContentText(content.toString());
+        alert.setContentText(content);
         alert.showAndWait();
 
         model.replaceLog(log);
