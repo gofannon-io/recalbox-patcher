@@ -92,7 +92,9 @@ public class RecalboxPatcherApplication extends Application {
         rootPane.setFillWidth(true);
         rootPane.setSpacing(15);
 
-        return new Scene(rootPane);
+        Scene newScene = new Scene(rootPane);
+        newScene.getStylesheets().add("/root.css");
+        return newScene;
     }
 
     private TitledPane createTitledPane(String key, Node content) {
