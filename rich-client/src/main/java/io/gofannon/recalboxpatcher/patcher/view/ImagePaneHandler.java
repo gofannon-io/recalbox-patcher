@@ -65,7 +65,7 @@ class ImagePaneHandler implements PaneHandler {
         this.pane = rootPane;
 
         inputImageDirectoryTextField.textProperty().bind(model.inputImageDirectoryProperty());
-        outputImageDirectoryTextField.textProperty().bind(model.outputImageDirectoryProperty());
+        outputImageDirectoryTextField.textProperty().bind(model.outputImageRelativeDirectoryProperty());
 
         imageWidthBiDir = model.widthImageProperty().asObject();
         imageWidthController.getValueFactory().valueProperty().bindBidirectional(imageWidthBiDir);

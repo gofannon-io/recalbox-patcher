@@ -16,9 +16,16 @@
 
 package io.gofannon.recalboxpatcher.patcher.view.model;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class UIModel {
 
@@ -28,6 +35,7 @@ public class UIModel {
 
     private StringProperty inputImageDirectory;
     private StringProperty outputImageDirectory;
+    private StringProperty outputImageRelativeDirectory;
 
     private IntegerProperty widthImage;
     private IntegerProperty heightImage;
@@ -45,9 +53,12 @@ public class UIModel {
         inputRecalboxFile = new SimpleStringProperty(null,"inputRecalboxFile", null);
         inputHyperspinFile = new SimpleStringProperty(null,"inputHyperspinFile", null);
         outputRecalboxFile = new SimpleStringProperty(null,"outputRecalboxFile", null);
+        outputRecalboxFile.addListener( this::computeOutputImageRelativeDirectory);
 
         inputImageDirectory = new SimpleStringProperty(null,"inputImageDirectory", null);
         outputImageDirectory = new SimpleStringProperty(null,"outputImageDirectory", null);
+        outputImageRelativeDirectory = new SimpleStringProperty(null,"outputImageRelativeDirectory", null);
+        outputImageDirectory.addListener( this::computeOutputImageRelativeDirectory);
 
         widthImage = new SimpleIntegerProperty(null, "imageWidth", 100);
         heightImage = new SimpleIntegerProperty(null, "imageHeight", 100);
@@ -72,6 +83,33 @@ public class UIModel {
         operationLog.setValue(buffer.toString());
     }
 
+    private void computeOutputImageRelativeDirectory(Observable observable) {
+        String relativePath = computeOutputImageRelativeDirectory();
+        outputImageRelativeDirectory.setValue(relativePath);
+    }
+
+    private String computeOutputImageRelativeDirectory() {
+        File recalboxFile = getOutputRecalboxFile();
+        File imageDirectory = getOutputImageDirectory();
+
+        if( imageDirectory == null )
+            return "";
+
+        if( recalboxFile == null )
+            return imageDirectory.getAbsolutePath();
+
+
+        Path recalboxDirectoryPath = Paths.get(recalboxFile.getAbsoluteFile().getParent());
+        Path imageDirectoryPath = Paths.get(imageDirectory.getAbsolutePath());
+        Path relative = recalboxDirectoryPath.relativize(imageDirectoryPath);
+        String asString = relative.toString();
+        return startWithPathSeparator(asString) ? asString : "./"+asString;
+    }
+
+    private boolean startWithPathSeparator(String path ) {
+        return path.startsWith("/") || path.startsWith("./") || path.startsWith("../");
+    }
+
     public StringProperty inputRecalboxFileProperty() {
         return inputRecalboxFile;
     }
@@ -84,13 +122,16 @@ public class UIModel {
         return outputRecalboxFile;
     }
 
-
     public StringProperty inputImageDirectoryProperty() {
         return inputImageDirectory;
     }
 
     public StringProperty outputImageDirectoryProperty() {
         return outputImageDirectory;
+    }
+
+    public StringProperty outputImageRelativeDirectoryProperty() {
+        return outputImageRelativeDirectory;
     }
 
     public IntegerProperty widthImageProperty() {
