@@ -100,7 +100,7 @@ public class OptionPaneHandler implements PaneHandler {
 
     private void bindControlsToModel() {
         notFoundCheckBox.selectedProperty().bindBidirectional(model.notFoundOptionProperty());
-        upperCaseCheckBox.selectedProperty().bindBidirectional(model.upperCaseOptionProperty());
+        upperCaseCheckBox.selectedProperty().bindBidirectional(model.uppercaseOptionProperty());
         newFileRadioButton.selectedProperty().bindBidirectional(model.newFileOptionProperty());
         addNameRadioButton.selectedProperty().bindBidirectional(model.addNameOptionProperty());
     }

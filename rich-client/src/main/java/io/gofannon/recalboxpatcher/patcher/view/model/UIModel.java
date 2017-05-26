@@ -65,7 +65,7 @@ public interface UIModel {
 
     BooleanProperty notFoundOptionProperty();
 
-    BooleanProperty upperCaseOptionProperty();
+    BooleanProperty uppercaseOptionProperty();
 
     BooleanProperty newFileOptionProperty();
 

@@ -40,7 +40,7 @@ public class DefaultUIModel implements UIModel {
     private final String[] imageFileExtensionList = {"jpg", "png", "gif"};
 
     private BooleanProperty notFoundOption;
-    private BooleanProperty upperCaseOption;
+    private BooleanProperty uppercaseOption;
     private BooleanProperty newFileOption;
     private BooleanProperty addNameOption;
 
@@ -62,7 +62,7 @@ public class DefaultUIModel implements UIModel {
         imageExtension = new SimpleStringProperty(null,"imageExtension", "jpg");
 
         notFoundOption = new SimpleBooleanProperty(null, "notFoundOption", false);
-        upperCaseOption = new SimpleBooleanProperty(null, "upperCaseOption", false);
+        uppercaseOption = new SimpleBooleanProperty(null, "uppercaseOption", false);
         newFileOption = new SimpleBooleanProperty(null, "newFileOption", false);
         addNameOption = new SimpleBooleanProperty(null, "addNameOption", true);
 
@@ -164,8 +164,8 @@ public class DefaultUIModel implements UIModel {
         return notFoundOption;
     }
 
-    public BooleanProperty upperCaseOptionProperty() {
-        return upperCaseOption;
+    public BooleanProperty uppercaseOptionProperty() {
+        return uppercaseOption;
     }
 
     public BooleanProperty newFileOptionProperty() {

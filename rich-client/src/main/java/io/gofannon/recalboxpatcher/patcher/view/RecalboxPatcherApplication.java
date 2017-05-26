@@ -19,6 +19,9 @@ package io.gofannon.recalboxpatcher.patcher.view;
 import io.gofannon.recalboxpatcher.patcher.view.model.DefaultUIModel;
 import io.gofannon.recalboxpatcher.patcher.view.model.UIModel;
 import javafx.application.Application;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.geometry.*;
 import javafx.scene.*;
@@ -44,6 +47,8 @@ public class RecalboxPatcherApplication extends Application {
     private Stage stage;
 
     private UIModel model = new DefaultUIModel();
+
+    private PatcherProcessingService patcherProcessingService;
 
     public static void main(String[] args) {
         launch(args);
@@ -130,33 +135,45 @@ public class RecalboxPatcherApplication extends Application {
     }
 
     private void onSave(ActionEvent event) {
-        List<String> log = createDummyLog();
-        String content = String.join("\n",log);
+        patcherProcessingService = new PatcherProcessingService();
+        patcherProcessingService.setContext(createPatchTaskContext());
+        patcherProcessingService.setOnSucceeded(this::processSucceeded);
+        patcherProcessingService.start();
+    }
+
+    private PatchTaskContext createPatchTaskContext() {
+        PatchTaskContext context = new PatchTaskContext();
+
+        context.setInputRecalboxFile(model.getInputRecalboxFile());
+        context.setInputHyperspinFile(model.getInputHyperspinFile());
+        context.setOutputRecalboxFile(model.getOutputRecalboxFile());
+
+        context.setInputImageDirectory(model.getInputImageDirectory());
+        context.setOutputImageDirectory(model.outputImageRelativeDirectoryProperty().getValue());
+
+        context.setWidthImage(model.widthImageProperty().getValue());
+        context.setHeightImage(model.heightImageProperty().getValue());
+        context.setImageExtension(model.imageExtensionProperty().getValue());
+
+        context.setAddNameOption(model.addNameOptionProperty().getValue());
+        context.setUppercaseOption(model.uppercaseOptionProperty().getValue());
+        context.setNewFileOption(model.newFileOptionProperty().getValue());
+        context.setNotFoundOption(model.notFoundOptionProperty().getValue());
+
+        return context;
+    }
+
+    private void processSucceeded(WorkerStateEvent stateEvent) {
+        List<String> log = patcherProcessingService.getLogs();
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Génération du fichier");
         alert.setHeaderText("Désolé, le générateur de fichier n'est pas encore intégré.");
+        String content = String.join("\n",log);
         alert.setContentText(content);
         alert.showAndWait();
 
         model.replaceLog(log);
-    }
-
-    private List<String> createDummyLog() {
-        List<String> logs = new ArrayList<>();
-        logs.add("Fichier d'entrée Recalbox: "+model.inputRecalboxFileProperty().getValue());
-        logs.add("Fichier d'entrée Hyperspin: "+model.inputHyperspinFileProperty().getValue());
-        logs.add("Fichier de sortie Recalbox: "+model.outputRecalboxFileProperty().getValue());
-        logs.add("Chemin des fichiers à télécharger: "+model.inputImageDirectoryProperty().getValue());
-        logs.add("Chemin des images dans le fichier: "+model.outputImageDirectoryProperty().getValue());
-        logs.add("Hauteur des images: "+model.heightImageProperty().getValue());
-        logs.add("Largeur des images: "+model.widthImageProperty().getValue());
-        logs.add("Extension des images: "+model.imageExtensionProperty().getValue());
-        logs.add("Option 'Non trouvée' activée: "+model.notFoundOptionProperty().getValue());
-        logs.add("Option 'Majuscule' activée: "+model.upperCaseOptionProperty().getValue());
-        logs.add("Option 'Nouveau Fichier' activée: "+model.newFileOptionProperty().getValue());
-        logs.add("Option 'Ajout de nom' activée: "+model.addNameOptionProperty().getValue());
-        return logs;
     }
 
     private void onExit(ActionEvent event) {
