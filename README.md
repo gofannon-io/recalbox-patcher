@@ -17,5 +17,5 @@ The software is developed with the following technologies:
 
 
 ## Sources 
-* [Recalbox](https://www.recalbox.com/)
-* [Hyperspin](http://www.hyperspin-fe.com/)
+* [Recalbox web site](https://www.recalbox.com/)
+* [Hyperspin web site](http://www.hyperspin-fe.com/)
