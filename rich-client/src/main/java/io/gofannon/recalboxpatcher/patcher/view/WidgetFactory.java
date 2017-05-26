@@ -21,13 +21,22 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
+import java.util.ResourceBundle;
+
 public final class WidgetFactory {
+
+    private static ResourceBundle resourceBundle = ResourceBundle.getBundle("view");
 
     public static Button createButton(String text, EventHandler<ActionEvent> action) {
         Button button = new Button();
         button.setText(text);
         button.setOnAction(action);
         return button;
+    }
+
+    public static Button createButtonWithBundle(String key, EventHandler<ActionEvent> action) {
+        String text = resourceBundle.getString(key);
+        return createButton(text, action);
     }
 
     public static TextField createNotEditableTextField() {

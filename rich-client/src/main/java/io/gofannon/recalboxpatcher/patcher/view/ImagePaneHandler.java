@@ -16,7 +16,6 @@
 
 package io.gofannon.recalboxpatcher.patcher.view;
 
-import com.sun.javafx.binding.BidirectionalBinding;
 import io.gofannon.recalboxpatcher.patcher.view.model.UIModel;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;
@@ -29,7 +28,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
 
+import java.util.ResourceBundle;
+
 class ImagePaneHandler implements PaneHandler {
+
+    private final ResourceBundle resourceBundle = ResourceBundle.getBundle("view");
 
     private Window ownerWindow;
     private UIModel model;
@@ -67,7 +70,6 @@ class ImagePaneHandler implements PaneHandler {
         imageWidthBiDir = model.widthImageProperty().asObject();
         imageWidthController.getValueFactory().valueProperty().bindBidirectional(imageWidthBiDir);
 
-
         imageHeightBiDir = model.heightImageProperty().asObject();
         imageHeightController.getValueFactory().valueProperty().bindBidirectional(imageHeightBiDir);
 
@@ -76,19 +78,25 @@ class ImagePaneHandler implements PaneHandler {
 
 
     private Pane createDirectoryPane() {
+        final String inputImageDirectoryLabel = resourceBundle.getString("images-pane.inputImageDirectory.label");
+        final String outputImageDirectoryLabel = resourceBundle.getString("images-pane.outputImageDirectory.label");
+
+
         return new FileSelectionPaneBuilder()
-                .addPathSelector("Chemin des images à télécharger",
+                .addPathSelector(inputImageDirectoryLabel,
                         inputImageDirectoryTextField,
                         this::onInputImageDirectoryButtonPressed)
-                .addPathSelector("Chemin des images dans le fichier",
+                .addPathSelector(outputImageDirectoryLabel,
                         outputImageDirectoryTextField,
                         this::onOutputImageDirectoryButtonPressed )
                 .build();
     }
 
     private void onInputImageDirectoryButtonPressed(ActionEvent event) {
+        final String title = resourceBundle.getString("images-pane.inputImageDirectory.dialog.title");
+
         DirectorySelector selector = new DirectorySelector(ownerWindow);
-        selector.setFileChooserTitle("Sélectionner le répertoire des images à télécharger");
+        selector.setFileChooserTitle(title);
         selector.setCurrentFile(model.getInputImageDirectory());
 
         selector.showOpenDialog();
@@ -96,8 +104,10 @@ class ImagePaneHandler implements PaneHandler {
     }
 
     private void onOutputImageDirectoryButtonPressed(ActionEvent event) {
+        final String title = resourceBundle.getString("images-pane.outputImageDirectory.dialog.title");
+
         DirectorySelector selector = new DirectorySelector(ownerWindow);
-        selector.setFileChooserTitle("Sélectionner le répertoire des images dans le fichier");
+        selector.setFileChooserTitle(title);
         selector.setCurrentFile(model.getOutputImageDirectory());
 
         selector.showOpenDialog();
@@ -110,9 +120,9 @@ class ImagePaneHandler implements PaneHandler {
         imageWidthController = createImageSizeSpinner();
         imageFileExtensionController = createImageFileExtensionComboBox();
 
-        Pane heightPane = createLabeledControl("Height", imageHeightController);
-        Pane widthPane = createLabeledControl("Width", imageWidthController);
-        Pane fileExtensionPane = createLabeledControl("Extension", imageFileExtensionController);
+        Pane heightPane = createLabeledControl("images-pane.image.height", imageHeightController);
+        Pane widthPane = createLabeledControl("images-pane.image.width", imageWidthController);
+        Pane fileExtensionPane = createLabeledControl("images-pane.image.extension", imageFileExtensionController);
 
         HBox imageSizePane = new HBox(
                 heightPane,
@@ -138,7 +148,9 @@ class ImagePaneHandler implements PaneHandler {
         return comboBox;
     }
 
-    private static Pane createLabeledControl(String labelText, Node node) {
+    private Pane createLabeledControl(String key, Node node) {
+        String labelText = resourceBundle.getString(key);
+
         HBox pane = new HBox(
                 new Label(labelText),
                 node

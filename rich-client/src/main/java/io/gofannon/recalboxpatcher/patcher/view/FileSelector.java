@@ -23,7 +23,11 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 
-public class FileSelector {
+import static io.gofannon.recalboxpatcher.patcher.view.FileExtensionUtils.*;
+
+
+class FileSelector {
+
 
     private Window ownerWindow;
 
@@ -32,7 +36,7 @@ public class FileSelector {
     private File initialDirectory;
     private String initialFilename;
     private String fileChooserTitle;
-    private FileChooser.ExtensionFilter singleFileFilter = new FileChooser.ExtensionFilter("All files (*.*)", "*.*");
+    private FileChooser.ExtensionFilter singleFileFilter = allFilesExtension();
 
 
     public FileSelector(Window ownerWindow) {
@@ -88,7 +92,6 @@ public class FileSelector {
     private File showDialog(FileChooserDisplay displayOperation) {
         fileChooser.setTitle(fileChooserTitle);
         fileChooser.getExtensionFilters().add(singleFileFilter);
-        //fileChooser.setSelectedExtensionFilter(singleFileFilter);
 
         if( initialDirectory != null)
             fileChooser.setInitialDirectory(initialDirectory);

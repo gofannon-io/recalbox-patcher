@@ -25,7 +25,11 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.*;
 import javafx.stage.Window;
 
+import java.util.ResourceBundle;
+
 public class OptionPaneHandler implements PaneHandler {
+
+    private final ResourceBundle resourceBundle = ResourceBundle.getBundle("view");
 
     private GridPane pane = new GridPane();
     private Window ownerWindow;
@@ -33,8 +37,8 @@ public class OptionPaneHandler implements PaneHandler {
     private ToggleGroup fileActionGroup = new ToggleGroup();
     private CheckBox notFoundCheckBox = new CheckBox();
     private CheckBox upperCaseCheckBox = new CheckBox();
-    private RadioButton newFileRadioButton = new RadioButton("Nouveau fichier");
-    private RadioButton addNameRadioButton = new RadioButton("Ajout de nom");
+    private RadioButton newFileRadioButton;
+    private RadioButton addNameRadioButton;
 
     @Override
     public void initialize(Window ownerWindow, UIModel model) {
@@ -58,21 +62,33 @@ public class OptionPaneHandler implements PaneHandler {
     }
 
     private void initRadioButtons() {
+        newFileRadioButton = createRadioButton("options-pane.newFile");
+        addNameRadioButton = createRadioButton("options-pane.addName");
+
+
         newFileRadioButton.setToggleGroup(fileActionGroup);
         addNameRadioButton.setToggleGroup(fileActionGroup);
         addNameRadioButton.setSelected(true);
     }
 
+    private RadioButton createRadioButton(String key) {
+        String text = resourceBundle.getString(key);
+        RadioButton button = new RadioButton(text);
+        button.setToggleGroup(fileActionGroup);
+        return button;
+    }
+
 
     private void addControlsToPane() {
         pane.setVgap(10);
-        addLabeledNode("Non trouvée", notFoundCheckBox, 0, 0);
-        addLabeledNode("Majuscule", upperCaseCheckBox, 0, 1);
+        addLabeledNode("options-pane.notFound", notFoundCheckBox, 0, 0);
+        addLabeledNode("options-pane.uppercase", upperCaseCheckBox, 0, 1);
         addNode( newFileRadioButton, 1, 0 );
         addNode( addNameRadioButton, 1, 1 );
     }
 
-    private void addLabeledNode(String labelText, Node node, int column, int row) {
+    private void addLabeledNode(String labelKey, Node node, int column, int row) {
+        String labelText = resourceBundle.getString(labelKey);
         Label label = new Label(labelText);
         HBox labeledControl = new HBox(node, label);
         pane.add(labeledControl, column, row);

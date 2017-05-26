@@ -26,10 +26,13 @@ import javafx.scene.layout.*;
 import javafx.stage.*;
 
 import java.util.Optional;
+import java.util.ResourceBundle;
 
-import static io.gofannon.recalboxpatcher.patcher.view.WidgetFactory.createButton;
+import static io.gofannon.recalboxpatcher.patcher.view.WidgetFactory.createButtonWithBundle;
 
 public class RecalboxPatcherApplication extends Application {
+
+    private final ResourceBundle resourceBundle = ResourceBundle.getBundle("view");
 
     private Pane scrapperPane;
     private Pane imagePane;
@@ -56,7 +59,7 @@ public class RecalboxPatcherApplication extends Application {
         Scene scene = createScene();
         stage.setScene(scene);
 
-        stage.setTitle("Recalbox patcher configuration");
+        stage.setTitle(resourceBundle.getString("application.title"));
         stage.setOnCloseRequest(this::onCloseRequest);
 
         stage.show();
@@ -75,9 +78,9 @@ public class RecalboxPatcherApplication extends Application {
     }
 
     private Scene createScene() {
-        TitledPane scrapperPane = createTitledPane("Scrapper", this.scrapperPane);
-        TitledPane imagePane = createTitledPane("Images", this.imagePane);
-        TitledPane optionPane = createTitledPane("Options", this.optionPane);
+        TitledPane scrapperPane = createTitledPane("scrapper-pane.title", this.scrapperPane);
+        TitledPane imagePane = createTitledPane("images-pane.title", this.imagePane);
+        TitledPane optionPane = createTitledPane("options-pane.title", this.optionPane);
         Pane controlPane = createControlPane();
 
         VBox rootPane = new VBox(
@@ -92,17 +95,18 @@ public class RecalboxPatcherApplication extends Application {
         return new Scene(rootPane);
     }
 
-    private TitledPane createTitledPane(String text, Node content) {
+    private TitledPane createTitledPane(String key, Node content) {
         TitledPane titledPane = new TitledPane();
         titledPane.setCollapsible(false);
+        String text = resourceBundle.getString(key);
         titledPane.setText(text);
         titledPane.setContent(content);
         return titledPane;
     }
 
     private Pane createControlPane() {
-        Button saveButton = createButton("Enregistrer", this::onSave);
-        Button exitButton = createButton("Quitter", this::onExit);
+        Button saveButton = createButtonWithBundle("application.save", this::onSave);
+        Button exitButton = createButtonWithBundle("application.exit", this::onExit);
 
         HBox buttonBox = new HBox(saveButton, exitButton);
         buttonBox.setSpacing(25);
@@ -144,8 +148,9 @@ public class RecalboxPatcherApplication extends Application {
     }
 
     private boolean userConfirmApplicationExit() {
+        String contentText = resourceBundle.getString("application.exit-confirmation-dialog.content");
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
-                "Voulez-vous quitter l'application ?",
+                contentText,
                 ButtonType.YES, ButtonType.NO);
         Optional<ButtonType> response = alert.showAndWait();
         return response.isPresent() && response.get() == ButtonType.YES;

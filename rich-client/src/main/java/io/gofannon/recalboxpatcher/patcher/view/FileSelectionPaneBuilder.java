@@ -48,11 +48,12 @@ public class FileSelectionPaneBuilder {
 
     private void seUpColumnConstraints() {
         ColumnConstraints fieldColumn = new ColumnConstraints(150,300,Double.MAX_VALUE);
-//        fieldColumn.setFillWidth(true);
         fieldColumn.setHgrow(Priority.ALWAYS);
+        fieldColumn.setFillWidth(true);
+
         ColumnConstraints buttonColumn = new ColumnConstraints(50);
-        //buttonColumn.setFillWidth(true);
-        pane.getColumnConstraints().addAll(fieldColumn, buttonColumn); // first column gets any extra width
+
+        pane.getColumnConstraints().addAll(fieldColumn, buttonColumn);
     }
 
     public FileSelectionPaneBuilder addPathSelector(String text, TextField textField, EventHandler<ActionEvent> buttonAction) {

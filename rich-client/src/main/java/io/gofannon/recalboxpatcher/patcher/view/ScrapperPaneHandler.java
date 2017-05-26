@@ -27,7 +27,13 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
+import java.util.ResourceBundle;
+
+import static io.gofannon.recalboxpatcher.patcher.view.FileExtensionUtils.*;
+
 class ScrapperPaneHandler implements PaneHandler {
+
+    private final ResourceBundle resourceBundle = ResourceBundle.getBundle("view");
 
     private UIModel model;
 
@@ -52,14 +58,19 @@ class ScrapperPaneHandler implements PaneHandler {
         inputHyperspinFileTextField.textProperty().bind(model.inputHyperspinFileProperty());
         outputRecalboxFileTextField.textProperty().bind(model.outputRecalboxFileProperty());
 
+
+        final String inputRecalboxFileLabel = resourceBundle.getString("scrapper-pane.inputRecalboxFile.label");
+        final String inputHyperspinFileLabel = resourceBundle.getString("scrapper-pane.inputHyperspinFile.label");
+        final String outputRecalboxFileLabel = resourceBundle.getString("scrapper-pane.outputRecalboxFile.label");
+
         this.pane = new FileSelectionPaneBuilder()
-                .addPathSelector("Chemin des noms à scrapper",
+                .addPathSelector(inputRecalboxFileLabel,
                         inputRecalboxFileTextField,
                         this::onInputRecalboxFileButtonPressed)
-                .addPathSelector("Chemin du fichier database Hyperspin",
+                .addPathSelector(inputHyperspinFileLabel,
                         inputHyperspinFileTextField,
                         this::onInputHyperspinFileButtonPressed)
-                .addPathSelector("Chemin de sortie fichier game recalbox",
+                .addPathSelector(outputRecalboxFileLabel,
                         outputRecalboxFileTextField,
                         this::onOutputRecalboxFileButtonPressed)
                 .build();
@@ -72,10 +83,11 @@ class ScrapperPaneHandler implements PaneHandler {
 
     private void onInputRecalboxFileButtonPressed(ActionEvent event) {
         FileSelector selector = new FileSelector(ownerWindow);
-        selector.setFileChooserTitle("Sélectionner le fichier Recalbox source");
-        selector.addFileChooserExtensions(
-                new FileChooser.ExtensionFilter("Fichiers Recalbox (*.xml)", "*.xml")
-        );
+
+        final String title = resourceBundle.getString("scrapper-pane.inputRecalboxFile.dialog.title");
+        selector.setFileChooserTitle(title);
+
+        selector.addFileChooserExtensions( recalboxFilesExtension() );
         selector.setCurrentFile(model.getInputRecalboxFile());
 
         selector.showOpenDialog();
@@ -86,10 +98,11 @@ class ScrapperPaneHandler implements PaneHandler {
 
     private void onInputHyperspinFileButtonPressed(ActionEvent event) {
         FileSelector selector = new FileSelector(ownerWindow);
-        selector.setFileChooserTitle("Sélectionner le fichier Hyperspin source");
-        selector.addFileChooserExtensions(
-                new FileChooser.ExtensionFilter("Fichiers Hyperspin (*.xml)", "*.xml")
-        );
+
+        final String title = resourceBundle.getString("scrapper-pane.inputHyperspinFile.dialog.title");
+        selector.setFileChooserTitle(title);
+
+        selector.addFileChooserExtensions(hyperspinFilesExtension());
         selector.setCurrentFile(model.getInputRecalboxFile());
 
         selector.showOpenDialog();
@@ -98,10 +111,11 @@ class ScrapperPaneHandler implements PaneHandler {
 
     private void onOutputRecalboxFileButtonPressed(ActionEvent event) {
         FileSelector selector = new FileSelector(ownerWindow);
-        selector.setFileChooserTitle("Sélectionner le fichier Recalbox cible");
-        selector.addFileChooserExtensions(
-                new FileChooser.ExtensionFilter("Fichiers Recalbox (*.xml)", "*.xml")
-        );
+
+        final String title = resourceBundle.getString("scrapper-pane.outputRecalboxFile.dialog.title");
+        selector.setFileChooserTitle(title);
+
+        selector.addFileChooserExtensions(recalboxFilesExtension());
         selector.setCurrentFile(model.getInputRecalboxFile());
 
         selector.showSaveDialog();

@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package io.gofannon.recalboxpatcher.patcher.view;
+
+package io.gofannon.recalboxpatcher.patcher.image;
 
 
-import javafx.stage.FileChooser;
-import javafx.stage.Window;
+import javafx.scene.image.Image;
 
-public class RecalboxFileSelector extends FileSelector {
+import java.awt.image.BufferedImage;
 
+public class ImageBuilder {
 
-    public RecalboxFileSelector(Window ownerWindow) {
-        super(ownerWindow);
+    public ImageBuilder(Image image ) {
 
-        setFileChooserTitle("Sélectionner le fichier Recalbox source");
-        setSingleFileChooserExtension(
-                new FileChooser.ExtensionFilter("Fichiers Recalbox", "*.xml")
-        );
     }
+
+    public ImageBuilder(BufferedImage image ) {
+
+    }
+
+    
 
 }
