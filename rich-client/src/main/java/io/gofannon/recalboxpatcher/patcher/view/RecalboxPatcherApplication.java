@@ -18,9 +18,11 @@ package io.gofannon.recalboxpatcher.patcher.view;
 
 import io.gofannon.recalboxpatcher.patcher.view.model.DefaultUIModel;
 import io.gofannon.recalboxpatcher.patcher.view.model.UIModel;
+import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskContext;
+import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskResult;
+import io.gofannon.recalboxpatcher.patcher.view.processing.PatcherProcessingService;
 import javafx.application.Application;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.geometry.*;
@@ -29,8 +31,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -42,13 +42,16 @@ public class RecalboxPatcherApplication extends Application {
 
     private Pane scrapperPane;
     private Pane imagePane;
+    private Pane processingPane;
     private Pane optionPane;
 
     private Stage stage;
 
     private UIModel model = new DefaultUIModel();
 
-    private PatcherProcessingService patcherProcessingService;
+    private Button saveButton;
+    private Button logButton;
+    private Button exitButton;
 
     public static void main(String[] args) {
         launch(args);
@@ -58,9 +61,8 @@ public class RecalboxPatcherApplication extends Application {
     public void start(Stage stage) {
         this.stage = stage;
 
-        scrapperPane = createPane(ScrapperPaneHandler.class);
-        imagePane = createPane(ImagePaneHandler.class);
-        optionPane = createPane(OptionPaneHandler.class);
+        buildPanes();
+        doBinding();
 
         Scene scene = createScene();
         stage.setScene(scene);
@@ -69,6 +71,13 @@ public class RecalboxPatcherApplication extends Application {
         stage.setOnCloseRequest(this::onCloseRequest);
 
         stage.show();
+    }
+
+    private void buildPanes() {
+        scrapperPane = createPane(ScrapperPaneHandler.class);
+        imagePane = createPane(ImagePaneHandler.class);
+        processingPane = createPane(ProcessingPaneHandler.class);
+        optionPane = createPane(OptionPaneHandler.class);
     }
 
     private Pane createPane(Class<? extends PaneHandler> paneHandlerClass) {
@@ -83,6 +92,30 @@ public class RecalboxPatcherApplication extends Application {
         }
     }
 
+
+    private void doBinding() {
+        model.processingStateProperty().addListener(this::onProcessingStateChanged);
+    }
+
+    private void onProcessingStateChanged(ObservableValue<? extends ProcessingState> observable, ProcessingState oldValue, ProcessingState newValue) {
+        if( newValue == ProcessingState.SUCESS)
+            patchSucceeded();
+
+        saveButton.setDisable( newValue == ProcessingState.RUNNING);
+    }
+
+    private void patchSucceeded() {
+        PatchTaskResult result = model.geLastPatchResult();
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Génération du fichier");
+        alert.setHeaderText("Désolé, le générateur de fichier n'est pas encore intégré.");
+        String content = String.join("\n", result.getLogs());
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+
     private Scene createScene() {
         TitledPane scrapperPane = createTitledPane("scrapper-pane.title", this.scrapperPane);
         TitledPane imagePane = createTitledPane("images-pane.title", this.imagePane);
@@ -93,6 +126,7 @@ public class RecalboxPatcherApplication extends Application {
                 scrapperPane,
                 imagePane,
                 optionPane,
+                processingPane,
                 controlPane);
         rootPane.setPadding(new Insets(10, 10, 10, 10));
         rootPane.setFillWidth(true);
@@ -113,9 +147,9 @@ public class RecalboxPatcherApplication extends Application {
     }
 
     private Pane createControlPane() {
-        Button logButton = createButtonWithBundle("application.log", this::onLog);
-        Button saveButton = createButtonWithBundle("application.save", this::onSave);
-        Button exitButton = createButtonWithBundle("application.exit", this::onExit);
+        logButton = createButtonWithBundle("application.log", this::onLog);
+        saveButton = createButtonWithBundle("application.save", this::onSave);
+        exitButton = createButtonWithBundle("application.exit", this::onExit);
 
         HBox buttonBox = new HBox(logButton, saveButton, exitButton);
         buttonBox.setSpacing(25);
@@ -135,45 +169,7 @@ public class RecalboxPatcherApplication extends Application {
     }
 
     private void onSave(ActionEvent event) {
-        patcherProcessingService = new PatcherProcessingService();
-        patcherProcessingService.setContext(createPatchTaskContext());
-        patcherProcessingService.setOnSucceeded(this::processSucceeded);
-        patcherProcessingService.start();
-    }
-
-    private PatchTaskContext createPatchTaskContext() {
-        PatchTaskContext context = new PatchTaskContext();
-
-        context.setInputRecalboxFile(model.getInputRecalboxFile());
-        context.setInputHyperspinFile(model.getInputHyperspinFile());
-        context.setOutputRecalboxFile(model.getOutputRecalboxFile());
-
-        context.setInputImageDirectory(model.getInputImageDirectory());
-        context.setOutputImageDirectory(model.outputImageRelativeDirectoryProperty().getValue());
-
-        context.setWidthImage(model.widthImageProperty().getValue());
-        context.setHeightImage(model.heightImageProperty().getValue());
-        context.setImageExtension(model.imageExtensionProperty().getValue());
-
-        context.setAddNameOption(model.addNameOptionProperty().getValue());
-        context.setUppercaseOption(model.uppercaseOptionProperty().getValue());
-        context.setNewFileOption(model.newFileOptionProperty().getValue());
-        context.setNotFoundOption(model.notFoundOptionProperty().getValue());
-
-        return context;
-    }
-
-    private void processSucceeded(WorkerStateEvent stateEvent) {
-        List<String> log = patcherProcessingService.getLogs();
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Génération du fichier");
-        alert.setHeaderText("Désolé, le générateur de fichier n'est pas encore intégré.");
-        String content = String.join("\n",log);
-        alert.setContentText(content);
-        alert.showAndWait();
-
-        model.replaceLog(log);
+        model.launchPatchProcess();
     }
 
     private void onExit(ActionEvent event) {

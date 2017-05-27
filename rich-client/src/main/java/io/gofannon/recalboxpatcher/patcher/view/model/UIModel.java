@@ -16,6 +16,8 @@
 
 package io.gofannon.recalboxpatcher.patcher.view.model;
 
+import io.gofannon.recalboxpatcher.patcher.view.ProcessingState;
+import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskResult;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.*;
@@ -73,5 +75,9 @@ public interface UIModel {
 
     StringProperty operationLogProperty();
 
-    void replaceLog(List<String> lines);
+    ObjectProperty<ProcessingState> processingStateProperty();
+
+    void launchPatchProcess();
+
+    PatchTaskResult geLastPatchResult();
 }

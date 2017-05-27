@@ -16,8 +16,14 @@
 
 package io.gofannon.recalboxpatcher.patcher.view.model;
 
+import io.gofannon.recalboxpatcher.patcher.view.ProcessingState;
+import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskContext;
+import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskResult;
+import io.gofannon.recalboxpatcher.patcher.view.processing.PatcherProcessingService;
 import javafx.beans.Observable;
 import javafx.beans.property.*;
+import javafx.concurrent.Worker;
+import javafx.concurrent.WorkerStateEvent;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -46,6 +52,10 @@ public class DefaultUIModel implements UIModel {
 
     private StringProperty operationLog;
 
+    private PatcherProcessingService patcherProcessingService;
+
+    private ObjectProperty<ProcessingState> processingState;
+
     public DefaultUIModel() {
         inputRecalboxFile = new SimpleStringProperty(null,"inputRecalboxFile", null);
         inputHyperspinFile = new SimpleStringProperty(null,"inputHyperspinFile", null);
@@ -67,9 +77,17 @@ public class DefaultUIModel implements UIModel {
         addNameOption = new SimpleBooleanProperty(null, "addNameOption", true);
 
         operationLog = new SimpleStringProperty(null, "operationsLog", null);
+
+        processingState = new SimpleObjectProperty<>(null, "processingState", ProcessingState.INITIAL);
+
+        patcherProcessingService = new PatcherProcessingService();
+        patcherProcessingService.setOnSucceeded(this::processSucceeded);
+        patcherProcessingService.setOnFailed(this::processOnFailed);
+        patcherProcessingService.setOnCancelled(this::processOnCancelled);
     }
 
-    private void computeOutputImageRelativeDirectory(Observable observable) {
+    @SuppressWarnings("unused")
+    private void computeOutputImageRelativeDirectory( Observable observable) {
         String relativePath = computeOutputImageRelativeDirectory();
         outputImageRelativeDirectory.setValue(relativePath);
     }
@@ -96,38 +114,47 @@ public class DefaultUIModel implements UIModel {
         return path.startsWith("/") || path.startsWith("./") || path.startsWith("../");
     }
 
+    @Override
     public StringProperty inputRecalboxFileProperty() {
         return inputRecalboxFile;
     }
 
+    @Override
     public StringProperty inputHyperspinFileProperty() {
         return inputHyperspinFile;
     }
 
+    @Override
     public StringProperty outputRecalboxFileProperty() {
         return outputRecalboxFile;
     }
 
+    @Override
     public StringProperty inputImageDirectoryProperty() {
         return inputImageDirectory;
     }
 
+    @Override
     public StringProperty outputImageDirectoryProperty() {
         return outputImageDirectory;
     }
 
+    @Override
     public StringProperty outputImageRelativeDirectoryProperty() {
         return outputImageRelativeDirectory;
     }
 
+    @Override
     public IntegerProperty widthImageProperty() {
         return widthImage;
     }
 
+    @Override
     public IntegerProperty heightImageProperty() {
         return heightImage;
     }
 
+    @Override
     public File getInputRecalboxFile() {
         return toFile(inputRecalboxFile);
     }
@@ -136,52 +163,124 @@ public class DefaultUIModel implements UIModel {
         return property.getValue()== null ? null : new File(property.getValue());
     }
 
+    @Override
     public File getInputHyperspinFile() {
         return toFile(inputHyperspinFile);
     }
 
+    @Override
     public File getOutputRecalboxFile() {
         return toFile(outputRecalboxFile);
     }
 
+    @Override
     public File getInputImageDirectory() {
         return toFile(inputImageDirectory);
     }
 
+    @Override
     public File getOutputImageDirectory() {
         return toFile(outputImageDirectory);
     }
 
+    @Override
     public StringProperty imageExtensionProperty() {
         return imageExtension;
     }
 
+    @Override
     public String[] getImageFileExtensionList() {
         return imageFileExtensionList;
     }
 
+    @Override
     public BooleanProperty notFoundOptionProperty() {
         return notFoundOption;
     }
 
+    @Override
     public BooleanProperty uppercaseOptionProperty() {
         return uppercaseOption;
     }
 
+    @Override
     public BooleanProperty newFileOptionProperty() {
         return newFileOption;
     }
 
+    @Override
     public BooleanProperty addNameOptionProperty() {
         return addNameOption;
     }
 
+    @Override
     public StringProperty operationLogProperty() {
         return operationLog;
     }
 
-    public void replaceLog(List<String> lines) {
+
+    @Override
+    public ObjectProperty<ProcessingState> processingStateProperty() {
+        return processingState;
+    }
+
+    public void launchPatchProcess() {
+        patcherProcessingService.setContext(createPatchTaskContext());
+
+//        if( patcherProcessingService.getState()!= Worker.State.READY)
+//            patcherProcessingService.reset();
+        patcherProcessingService.restart();
+
+        processingStateProperty().setValue(ProcessingState.RUNNING);
+    }
+
+    private void processSucceeded(WorkerStateEvent stateEvent) {
+        updateLogFromPatcherProcessing();
+        processingStateProperty().setValue(ProcessingState.SUCESS);
+    }
+
+    private void updateLogFromPatcherProcessing() {
+        List<String> lines = patcherProcessingService.getValue().getLogs();
         String buffer = String.join("\n", lines.toArray(new String[0]));
         operationLog.setValue(buffer);
+    }
+
+
+    private void processOnFailed(WorkerStateEvent stateEvent) {
+        operationLog.setValue("Failure");
+        processingStateProperty().setValue(ProcessingState.FAILURE);
+    }
+
+    private void processOnCancelled(WorkerStateEvent stateEvent) {
+        operationLog.setValue("Cancelled");
+        processingStateProperty().setValue(ProcessingState.CANCEL);
+    }
+
+
+    private PatchTaskContext createPatchTaskContext() {
+        PatchTaskContext context = new PatchTaskContext();
+
+        context.setInputRecalboxFile(getInputRecalboxFile());
+        context.setInputHyperspinFile(getInputHyperspinFile());
+        context.setOutputRecalboxFile(getOutputRecalboxFile());
+
+        context.setInputImageDirectory(getInputImageDirectory());
+        context.setOutputImageDirectory(outputImageRelativeDirectoryProperty().getValue());
+
+        context.setWidthImage(widthImageProperty().getValue());
+        context.setHeightImage(heightImageProperty().getValue());
+        context.setImageExtension(imageExtensionProperty().getValue());
+
+        context.setAddNameOption(addNameOptionProperty().getValue());
+        context.setUppercaseOption(uppercaseOptionProperty().getValue());
+        context.setNewFileOption(newFileOptionProperty().getValue());
+        context.setNotFoundOption(notFoundOptionProperty().getValue());
+
+        return context;
+    }
+
+    @Override
+    public PatchTaskResult geLastPatchResult() {
+        return patcherProcessingService.getValue();
     }
 }

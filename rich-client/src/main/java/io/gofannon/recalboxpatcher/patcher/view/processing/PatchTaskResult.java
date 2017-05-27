@@ -14,32 +14,22 @@
  *  limitations under the License.
  */
 
-package io.gofannon.recalboxpatcher.patcher.view;
+package io.gofannon.recalboxpatcher.patcher.view.processing;
 
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by gwen on 27/05/17.
- */
-public class PatcherProcessingService extends Service<Void> {
+public class PatchTaskResult {
 
-    private PatchTaskContext context;
     private List<String> logs = new ArrayList<>();
 
-    public void setContext(PatchTaskContext context) {
-        this.context = context;
-    }
-
-    @Override
-    protected Task<Void> createTask() {
-        return new RecalboxPatcherTask(context, logs);
-    }
 
     public List<String> getLogs() {
         return logs;
+    }
+
+    public void setLogs(List<String> logs) {
+        this.logs = logs;
     }
 }

@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package io.gofannon.recalboxpatcher.patcher.view;
+package io.gofannon.recalboxpatcher.patcher.view.processing;
 
 import java.io.File;
 

@@ -16,6 +16,8 @@
 
 package io.gofannon.recalboxpatcher.patcher.view;
 
+import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskContext;
+import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskResult;
 import javafx.concurrent.Task;
 
 import java.util.ArrayList;
@@ -24,25 +26,28 @@ import java.util.List;
 /**
  * Task for running the Recalbox patcher.
  */
-public class RecalboxPatcherTask extends Task<Void> {
+public class RecalboxPatcherTask extends Task<PatchTaskResult> {
 
     private PatchTaskContext context;
-    private List<String> logs;
 
 
-    public RecalboxPatcherTask(PatchTaskContext context, List<String> logs) {
+    public RecalboxPatcherTask(PatchTaskContext context) {
         this.context = context;
-        this.logs = logs;
     }
 
     @Override
-    protected Void call() throws Exception {
-        Thread.sleep(60*000);
+    protected PatchTaskResult call() throws Exception {
+        Thread.sleep(5 * 1000);
         createDummyLog();
-        return null;
+        System.out.println("SUCCESS");
+
+        PatchTaskResult result = new PatchTaskResult();
+        result.setLogs(createDummyLog());
+        return result;
     }
 
-    private void createDummyLog() {
+    private List<String> createDummyLog() {
+        List<String> logs = new ArrayList<>();
         logs.add("Fichier d'entrée Recalbox: "+context.getInputRecalboxFile());
         logs.add("Fichier d'entrée Hyperspin: "+context.getInputHyperspinFile());
         logs.add("Fichier de sortie Recalbox: "+context.getOutputRecalboxFile());
@@ -55,10 +60,6 @@ public class RecalboxPatcherTask extends Task<Void> {
         logs.add("Option 'Majuscule' activée: "+context.isUppercaseOption());
         logs.add("Option 'Nouveau Fichier' activée: "+context.isNewFileOption());
         logs.add("Option 'Ajout de nom' activée: "+context.isAddNameOption());
-    }
-
-
-    public List<String> getLogs() {
         return logs;
     }
 }
