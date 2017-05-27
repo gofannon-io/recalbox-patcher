@@ -18,12 +18,9 @@ package io.gofannon.recalboxpatcher.patcher.view;
 
 import io.gofannon.recalboxpatcher.patcher.view.model.DefaultUIModel;
 import io.gofannon.recalboxpatcher.patcher.view.model.UIModel;
-import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskContext;
 import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskResult;
-import io.gofannon.recalboxpatcher.patcher.view.processing.PatcherProcessingService;
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.geometry.*;
 import javafx.scene.*;
@@ -160,7 +157,7 @@ public class RecalboxPatcherApplication extends Application {
     }
 
     private void onLog(ActionEvent event) {
-        Dialog<Void> dialog = new Dialog();
+        Dialog<Void> dialog = new Dialog<>();
 
         LogDialogHandler logDialogPane = new LogDialogHandler();
         logDialogPane.initialize(dialog, model);

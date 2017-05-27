@@ -22,7 +22,7 @@ targetCompatibility = 1.8
 
 mainClassName="io.gofannon.recalboxpatcher.patcher.view.RecalboxPatcherApplication"
 
-version = '0.1'
+version = '0.2'
 jar {
     manifest {
         attributes 'Implementation-Title': 'RecalBox Patcher RichClient',
@@ -31,14 +31,27 @@ jar {
 
     }
 
+}
 
-    from {
-        List<File> allFiles = new ArrayList<>();
-        configurations.compile.collect {
-            allFiles.addAll( zipTree(it).getAt("asFileTrees") )
+task createExecJar( type: Jar ) {
+    jar {
+        manifest {
+            attributes 'Implementation-Title': 'RecalBox Patcher RichClient',
+                    'Implementation-Version': version,
+                    'Main-Class': mainClassName
         }
 
-        allFiles
+        from {
+            List<File> allFiles = new ArrayList<>();
+            configurations.compile.collect {
+                allFiles.addAll( zipTree(it).getAt("asFileTrees") )
+            }
+
+            allFiles
+        }
+
+        destinationDir = new File(project.buildDir, "executable-single")
+        archiveName="recalbox-patcher-"+version+".jar"
     }
 }
 
@@ -48,7 +61,6 @@ dependencies {
 
     compile group: 'commons-io', name: 'commons-io', version: '2.5'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
-	
 		
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.6.2'
