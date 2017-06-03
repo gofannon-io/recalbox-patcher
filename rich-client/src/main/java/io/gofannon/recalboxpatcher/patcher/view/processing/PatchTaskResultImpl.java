@@ -103,6 +103,7 @@ class PatchTaskResultImpl implements PatchTaskResult {
         if (gameProcessingResult == null)
             return;
 
+        logs.add("");
         logs.add("Jeux: ");
         logs.add("Nombre de jeux: " + gameProcessingResult.getTotalGameCount());
         logs.add("Nombre de jeux patchés: " + gameProcessingResult.getPatchedGameCount());
@@ -131,11 +132,13 @@ class PatchTaskResultImpl implements PatchTaskResult {
         if (imageProcessingResult == null)
             return;
 
+        logs.add("");
         logs.add("Images ");
-        logs.add("Total image count: " + imageProcessingResult.getImageCount());
-        logs.add("Success image count: " + imageProcessingResult.getSucceededProcessedImageCount());
-        logs.add("Failed image count: " + imageProcessingResult.getFailedProcessingImageCount());
+        logs.add("Nombre total d'images: " + imageProcessingResult.getImageCount());
+        logs.add("Nombre de conversions avec succès: " + imageProcessingResult.getSucceededProcessedImageCount());
+        logs.add("Nombre de conversions échouées: " + imageProcessingResult.getFailedProcessingImageCount());
 
+        logs.add("Liste des images:");
         List<String> imageLogs = createImageLogs();
         logs.addAll(imageLogs);
     }

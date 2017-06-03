@@ -49,6 +49,8 @@ public class OptionPaneHandler implements PaneHandler {
         initRadioButtons();
         addControlsToPane();
         bindControlsToModel();
+
+        disableAllControls();
     }
 
     private void initColumns() {
@@ -65,9 +67,6 @@ public class OptionPaneHandler implements PaneHandler {
         newFileRadioButton = createRadioButton("options-pane.newFile");
         addNameRadioButton = createRadioButton("options-pane.addName");
 
-
-        newFileRadioButton.setToggleGroup(fileActionGroup);
-        addNameRadioButton.setToggleGroup(fileActionGroup);
         addNameRadioButton.setSelected(true);
     }
 
@@ -109,4 +108,13 @@ public class OptionPaneHandler implements PaneHandler {
     public Pane getPane() {
         return pane;
     }
+
+
+    private void disableAllControls() {
+        this.newFileRadioButton.setDisable(true);
+        this.addNameRadioButton.setDisable(true);
+        this.upperCaseCheckBox.setDisable(true);
+        this.notFoundCheckBox.setDisable(true);
+    }
+
 }
