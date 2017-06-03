@@ -55,7 +55,8 @@ public class DefaultGameDatabasePatcher implements GameDatabasePatcher {
         patchedGame.setGenre(hyperspinGame.getGenre());
         patchedGame.setPlayCount(hyperspinGame.getPlayerCount());
         patchedGame.setLastPlayed("");
-        patchedGame.setImage(patchedImagePath(recalboxGame));
+        String imagePath = patchedImagePath(recalboxGame);
+        patchedGame.setImage(imagePath);
 
         return patchedGame;
     }
@@ -66,6 +67,7 @@ public class DefaultGameDatabasePatcher implements GameDatabasePatcher {
 
     private String patchedImagePath(RecalboxGame game) {
         String originalPath = game.getImage();
-        return imagePathPatcher.patch(originalPath);
+        String patchedImage = imagePathPatcher.patch(originalPath);
+        return patchedImage;
     }
 }

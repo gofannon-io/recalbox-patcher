@@ -13,27 +13,20 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package io.gofannon.recalboxpatcher.patcher.patch.image;
 
-import javafx.scene.image.Image;
+package io.gofannon.recalboxpatcher.patcher.image;
 
-import static org.apache.commons.lang3.Validate.notNull;
+import java.util.List;
+
+public interface ImageProcessingResult {
+
+    int getImageCount();
+
+    int getSucceededProcessedImageCount();
+
+    int getFailedProcessingImageCount();
 
 
-/**
- * Dummy implementation of {@link ImagePatcher} which does nothing
- */
-public class IdentityImagePatcher implements ImagePatcher {
+    List<SingleImageProcessingResult> getProcessedImages();
 
-    private ImageDimension dimension;
-
-    public void setDimension(ImageDimension dimension) {
-        notNull(dimension, "dimension argument shall not be null");
-        this.dimension = new ImageDimension(dimension);
-    }
-
-    @Override
-    public Image patchImage(Image image) {
-        return image;
-    }
 }

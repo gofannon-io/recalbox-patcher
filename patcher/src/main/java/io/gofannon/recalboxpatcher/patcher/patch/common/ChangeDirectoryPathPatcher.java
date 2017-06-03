@@ -50,6 +50,12 @@ public class ChangeDirectoryPathPatcher implements PathPatcher {
             return path;
 
         String filename = FilenameUtils.getName(path);
-        return FilenameUtils.concat(directoryPath, filename);
+        String patchedFilename = filename.replace("-image.",".");
+
+        String patchedPath = FilenameUtils.concat(directoryPath, patchedFilename);
+        if( directoryPath.startsWith("./") && patchedPath.startsWith("./")==false)
+            return "./"+patchedPath;
+        else
+            return patchedPath;
     }
 }

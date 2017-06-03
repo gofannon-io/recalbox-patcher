@@ -16,8 +16,6 @@
 
 package io.gofannon.recalboxpatcher.patcher.view.processing;
 
-import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskContext;
-import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskResult;
 import javafx.concurrent.Task;
 
 import java.util.ArrayList;
@@ -52,7 +50,7 @@ public class SimulatedRecalboxPatcherTask extends Task<PatchTaskResult> {
         logs.add("Fichier d'entrée Hyperspin: "+context.getInputHyperspinFile());
         logs.add("Fichier de sortie Recalbox: "+context.getOutputRecalboxFile());
         logs.add("Chemin des fichiers à télécharger: "+context.getInputImageDirectory());
-        logs.add("Chemin des images dans le fichier: "+context.getOutputImageDirectory());
+        logs.add("Chemin des images dans le fichier: "+context.getOutputRelativeImageDirectory());
         logs.add("Hauteur des images: "+context.getHeightImage());
         logs.add("Largeur des images: "+context.getWidthImage());
         logs.add("Extension des images: "+context.getImageExtension());

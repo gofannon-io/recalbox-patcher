@@ -14,15 +14,25 @@
  *  limitations under the License.
  */
 
-package io.gofannon.recalboxpatcher.patcher.patch.image;
+package io.gofannon.recalboxpatcher.patcher.image;
 
-import javafx.scene.image.Image;
+import java.io.File;
 
-/**
- * Patcher of images
- */
-public interface ImagePatcher {
+public interface SingleImageProcessingResult {
 
-    Image patchImage(Image image);
+    File getInputFile();
 
+    File getOutputFile();
+
+    boolean isSuccess();
+
+    boolean isScaled();
+
+    boolean isTypeChanged();
+
+    boolean isRead();
+
+    boolean isWritten();
+
+    Exception getException();
 }

@@ -17,13 +17,15 @@
 package io.gofannon.recalboxpatcher.patcher.view.processing;
 
 
+import io.gofannon.recalboxpatcher.patcher.image.ImageProcessingResult;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class PatchTaskResult {
 
     private List<String> logs = new ArrayList<>();
-
+    private ImageProcessingResult imageProcessingResult;
 
     public List<String> getLogs() {
         return logs;
@@ -31,5 +33,13 @@ public class PatchTaskResult {
 
     public void setLogs(List<String> logs) {
         this.logs = logs;
+    }
+
+    public ImageProcessingResult getImageProcessingResult() {
+        return imageProcessingResult;
+    }
+
+    public void setImageProcessingResult(ImageProcessingResult imageProcessingResult) {
+        this.imageProcessingResult = imageProcessingResult;
     }
 }

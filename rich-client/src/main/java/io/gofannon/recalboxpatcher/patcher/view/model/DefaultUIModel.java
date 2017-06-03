@@ -271,7 +271,8 @@ public class DefaultUIModel implements UIModel {
         context.setOutputRecalboxFile(getOutputRecalboxFile());
 
         context.setInputImageDirectory(getInputImageDirectory());
-        context.setOutputImageDirectory(outputImageRelativeDirectoryProperty().getValue());
+        context.setOutputImageDirectory(getOutputImageDirectory());
+        context.setOutputRelativeImageDirectory(outputImageRelativeDirectoryProperty().getValue());
 
         context.setWidthImage(widthImageProperty().getValue());
         context.setHeightImage(heightImageProperty().getValue());

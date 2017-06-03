@@ -28,7 +28,8 @@ public class PatchTaskContext {
     private File outputRecalboxFile;
 
     private File inputImageDirectory;
-    private String outputImageDirectory;
+    private File outputImageDirectory;
+    private String outputRelativeImageDirectory;
 
     private int heightImage;
     private int widthImage;
@@ -72,12 +73,20 @@ public class PatchTaskContext {
         this.inputImageDirectory = inputImageDirectory;
     }
 
-    public String getOutputImageDirectory() {
+    public File getOutputImageDirectory() {
         return outputImageDirectory;
     }
 
-    public void setOutputImageDirectory(String outputImageDirectory) {
+    public void setOutputImageDirectory(File outputImageDirectory) {
         this.outputImageDirectory = outputImageDirectory;
+    }
+
+    public String getOutputRelativeImageDirectory() {
+        return outputRelativeImageDirectory;
+    }
+
+    public void setOutputRelativeImageDirectory(String outputRelativeImageDirectory) {
+        this.outputRelativeImageDirectory = outputRelativeImageDirectory;
     }
 
     public int getHeightImage() {
@@ -135,4 +144,5 @@ public class PatchTaskContext {
     public void setAddNameOption(boolean addNameOption) {
         this.addNameOption = addNameOption;
     }
+
 }

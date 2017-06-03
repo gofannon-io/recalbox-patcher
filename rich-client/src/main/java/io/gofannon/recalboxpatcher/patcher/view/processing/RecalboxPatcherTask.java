@@ -16,9 +16,11 @@
 
 package io.gofannon.recalboxpatcher.patcher.view.processing;
 
-import io.gofannon.recalboxpatcher.patcher.patch.common.IdentityPathPatcher;
-import io.gofannon.recalboxpatcher.patcher.patch.common.PathPatcher;
+import io.gofannon.recalboxpatcher.patcher.image.ImageProcessingResult;
+import io.gofannon.recalboxpatcher.patcher.image.ResizeAndConvertImageProcessor;
+import io.gofannon.recalboxpatcher.patcher.patch.common.ChangeDirectoryPathPatcher;
 import io.gofannon.recalboxpatcher.patcher.patch.database.DefaultGameDatabasePatcher;
+import io.gofannon.recalboxpatcher.patcher.patch.image.ImageDimension;
 import io.gofannon.recalboxpatcher.patcher.processor.FileResourceProvider;
 import io.gofannon.recalboxpatcher.patcher.processor.GameDatabasePatchProcessor;
 import io.gofannon.recalboxpatcher.patcher.processor.PatchProcessingResult;
@@ -43,13 +45,29 @@ public class RecalboxPatcherTask extends Task<PatchTaskResult> {
         this.context = context;
     }
 
+    //FIXME enhance logging by separating logs and results
+
     @Override
     protected PatchTaskResult call() throws Exception {
+        PatchProcessingResult processingResult = processingGames();
+        ImageProcessingResult imageProcessingResult = processImages();
+
+
+        PatchTaskResult result = new PatchTaskResult();
+        result.setImageProcessingResult(imageProcessingResult);
+        result.setLogs(createLogs(processingResult));
+
+
+        return result;
+    }
+
+    private PatchProcessingResult processingGames() {
         File inputRecalboxFile = context.getInputRecalboxFile();
         File inputHyperspinFile = context.getInputHyperspinFile();
         File outputRecalboxFile = context.getOutputRecalboxFile();
 
-        PathPatcher imagePathPatcher = new IdentityPathPatcher();
+        ChangeDirectoryPathPatcher imagePathPatcher = new ChangeDirectoryPathPatcher();
+        imagePathPatcher.setDirectoryPath(context.getOutputRelativeImageDirectory());
 
         FileResourceProvider resourceProvider = new FileResourceProvider();
         resourceProvider.setInputRecalboxDatabaseFile(inputRecalboxFile);
@@ -64,11 +82,18 @@ public class RecalboxPatcherTask extends Task<PatchTaskResult> {
         processor.setResourceProvider(resourceProvider);
         processor.setGamePatcher(patcher);
 
-        PatchProcessingResult processingResult = processor.process();
+        return processor.process();
+    }
 
-        PatchTaskResult result = new PatchTaskResult();
-        result.setLogs(createLogs(processingResult));
-        return result;
+    private ImageProcessingResult processImages() {
+        ResizeAndConvertImageProcessor imageProcessor = new ResizeAndConvertImageProcessor();
+        ImageDimension imageDimension = new ImageDimension();
+        imageDimension.setWidth(context.getWidthImage());
+        imageDimension.setHeight(context.getHeightImage());
+        imageProcessor.setDimension(imageDimension);
+        imageProcessor.setType(context.getImageExtension());
+
+        return imageProcessor.processImageFiles(context.getInputImageDirectory(), context.getOutputImageDirectory());
     }
 
     private List<String> createLogs(PatchProcessingResult result) {
@@ -78,7 +103,7 @@ public class RecalboxPatcherTask extends Task<PatchTaskResult> {
         logs.add("Fichier d'entrée Hyperspin: "+context.getInputHyperspinFile());
         logs.add("Fichier de sortie Recalbox: "+context.getOutputRecalboxFile());
         logs.add("Chemin des fichiers à télécharger: "+context.getInputImageDirectory());
-        logs.add("Chemin des images dans le fichier: "+context.getOutputImageDirectory());
+        logs.add("Chemin des images dans le fichier: "+context.getOutputRelativeImageDirectory());
         logs.add("Hauteur des images: "+context.getHeightImage());
         logs.add("Largeur des images: "+context.getWidthImage());
         logs.add("Extension des images: "+context.getImageExtension());

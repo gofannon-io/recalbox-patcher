@@ -16,94 +16,13 @@
 
 package io.gofannon.recalboxpatcher.patcher.image;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
 
-import static org.apache.commons.lang3.Validate.*;
+/**
+ * Patcher of images
+ */
+public interface ImageProcessor {
 
-public class ImageProcessor {
+    ImageProcessingResult processImageFiles(File inputDirectory, File outputDirectory);
 
-    private boolean resize = false;
-    private int width;
-    private int height;
-
-    private boolean changeFormat;
-    private String format;
-
-
-    public ImageProcessor resize(int newWidth, int newHeight) {
-        isValidDimension("width", newWidth);
-        isValidDimension("height", newHeight);
-
-        this.width = newWidth;
-        this.height = newHeight;
-        this.resize = true;
-
-        return this;
-    }
-
-    private void isValidDimension(String name, int dim) {
-        isTrue(dim > 0, "%s %d is not greater than 0", name, dim);
-        isTrue(dim <=500, "%s %d is not lower or equal to 500", name, dim);
-    }
-
-    public ImageProcessor changeFormat(String newFormat) {
-        isTrue(isSupportedFormat(newFormat), "Unsupported image format %s", newFormat);
-
-        changeFormat = true;
-        this.format = newFormat;
-
-        return this;
-    }
-
-    private static boolean isSupportedFormat(String newFormat) {
-        if (newFormat == null)
-            return false;
-        switch (newFormat.toLowerCase()) {
-            case "jpg":
-            case "png":
-            case "gif":
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    public BufferedImage process(InputStream sourceImageInputStream) throws IOException {
-        BufferedImage sourceImage = ImageIO.read(sourceImageInputStream);
-
-        BufferedImage resizedImage = resizeImage(sourceImage);
-        BufferedImage newFormatImage = changeFormat(resizedImage);
-        return newFormatImage;
-    }
-
-    private BufferedImage resizeImage(BufferedImage sourceImage) {
-        if( this.resize==false || hasAlreadyExpectedSize(sourceImage))
-            return sourceImage;
-
-        Image resizedImage = sourceImage.getScaledInstance(this.width, this.height, Image.SCALE_SMOOTH);
-        return toBufferedImage(resizedImage);
-    }
-
-    private boolean hasAlreadyExpectedSize(BufferedImage sourceImage) {
-        return sourceImage.getWidth(null)==this.width
-                && sourceImage.getHeight(null)==this.height;
-    }
-
-
-    private static BufferedImage toBufferedImage(Image source) {
-        BufferedImage bufferedImage = new BufferedImage(
-                source.getWidth(null),
-                source.getHeight(null),
-                BufferedImage.TYPE_INT_RGB);
-        bufferedImage.getGraphics().drawImage(source, 0, 0, null);
-        return bufferedImage;
-    }
-
-    private BufferedImage changeFormat(BufferedImage sourceImage) {
-        return sourceImage;
-    }
 }
