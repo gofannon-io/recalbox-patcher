@@ -22,7 +22,7 @@ targetCompatibility = 1.8
 
 mainClassName="io.gofannon.recalboxpatcher.patcher.view.RecalboxPatcherApplication"
 
-version = '0.2'
+version = '0.3'
 jar {
     manifest {
         attributes 'Implementation-Title': 'RecalBox Patcher RichClient',
