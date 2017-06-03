@@ -16,7 +16,6 @@
 
 package io.gofannon.recalboxpatcher.patcher.view;
 
-
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import org.apache.commons.io.FileUtils;
@@ -28,33 +27,30 @@ import static io.gofannon.recalboxpatcher.patcher.view.FileExtensionUtils.*;
 
 class FileSelector {
 
-
     private Window ownerWindow;
 
     private FileChooser fileChooser = new FileChooser();
-    private File selectedFile;
     private File initialDirectory;
+    private File initialFile;
+    private File selectedFile;
     private String initialFilename;
     private String fileChooserTitle;
     private FileChooser.ExtensionFilter singleFileFilter = allFilesExtension();
 
 
-    public FileSelector(Window ownerWindow) {
+    public FileSelector(Window ownerWindow, File initialDirectory) {
         this.ownerWindow = ownerWindow;
-        setDefaultInitialDirectory();
+        this.initialDirectory = initialDirectory;
     }
 
-    private void setDefaultInitialDirectory() {
-        initialDirectory = FileUtils.getUserDirectory();
-    }
+    public void setInitialFile(File initialFile ) {
+        this.initialFile = initialFile;
 
-    public void setCurrentFile( File selectedFile ) {
-        if( selectedFile == null ) {
-            setDefaultInitialDirectory();
+        if( this.initialFile == null ) {
             this.initialFilename = null;
         } else {
-            this.initialDirectory = selectedFile.getParentFile();
-            this.initialFilename = selectedFile.getName();
+            this.initialDirectory = this.initialFile.getParentFile();
+            this.initialFilename = this.initialFile.getName();
         }
     }
 
@@ -99,8 +95,9 @@ class FileSelector {
         if( initialFilename != null)
             fileChooser.setInitialFileName(initialFilename);
 
-        this.selectedFile = displayOperation.display(fileChooser);
-        return selectedFile;
+        File resultFile = displayOperation.display(fileChooser);
+        this.selectedFile = resultFile==null ? this.initialFile : resultFile;
+        return this.selectedFile;
     }
 
     private File openDialog(FileChooser fileChooser ) {

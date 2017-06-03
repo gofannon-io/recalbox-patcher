@@ -97,7 +97,7 @@ class ImagePaneHandler implements PaneHandler {
 
         DirectorySelector selector = new DirectorySelector(ownerWindow);
         selector.setFileChooserTitle(title);
-        selector.setCurrentFile(model.getInputImageDirectory());
+        selector.setInitialDirectory(model.getInputImageDirectory(), model.getDefaultSelectionDirectory());
 
         selector.showOpenDialog();
         model.inputImageDirectoryProperty().setValue(selector.getSelectedDirectoryAsString());
@@ -108,7 +108,7 @@ class ImagePaneHandler implements PaneHandler {
 
         DirectorySelector selector = new DirectorySelector(ownerWindow);
         selector.setFileChooserTitle(title);
-        selector.setCurrentFile(model.getOutputImageDirectory());
+        selector.setInitialDirectory(model.getOutputImageDirectory(), model.getDefaultSelectionDirectory());
 
         selector.showOpenDialog();
         model.outputImageDirectoryProperty().setValue(selector.getSelectedDirectoryAsString());

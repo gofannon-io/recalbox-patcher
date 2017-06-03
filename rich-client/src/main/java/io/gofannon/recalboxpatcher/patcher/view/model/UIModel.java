@@ -76,4 +76,7 @@ public interface UIModel {
 
     //FIXME is it really usefull, can't we use #getOperationLogs & co ?
     PatchTaskResult geLastPatchResult();
+
+
+    File getDefaultSelectionDirectory();
 }

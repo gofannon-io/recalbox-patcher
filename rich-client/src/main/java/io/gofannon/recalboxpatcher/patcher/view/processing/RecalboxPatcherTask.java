@@ -28,6 +28,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Task for running the Recalbox patcher.
@@ -91,14 +92,22 @@ public class RecalboxPatcherTask extends Task<PatchTaskResult> {
         logs.add("Nombre de jeux patchés: "+result.getPatchedGameCount());
         logs.add("Nombre de jeux non patchés: "+result.getNotPatchedGameCount());
 
+        logs.add("Liste des jeux patchés");
         List<String> patchedGames = result.getPatchedGames();
         Collections.sort(patchedGames);
-        logs.add("Liste des jeux patchés: "+String.join(",", patchedGames));
+        logs.addAll( addPrefixToList("\t", patchedGames));
 
+        logs.add("Liste des jeux non patchés");
         List<String> notPatchedGames = result.getNotPatchedGames();
         Collections.sort(notPatchedGames);
-        logs.add("Liste des jeux non patchés: "+String.join(",", notPatchedGames));
+        logs.addAll( addPrefixToList("\t", notPatchedGames));
 
         return logs;
+    }
+
+    private List<String> addPrefixToList(String prefix, List<String> list) {
+        return list.stream()
+                .map( s -> prefix+s)
+                .collect(Collectors.toList());
     }
 }

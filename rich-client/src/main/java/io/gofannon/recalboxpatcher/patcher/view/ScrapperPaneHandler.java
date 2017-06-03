@@ -24,7 +24,6 @@ import static io.gofannon.recalboxpatcher.patcher.view.WidgetFactory.createNotEd
 import javafx.event.ActionEvent;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
 import java.util.ResourceBundle;
@@ -82,13 +81,13 @@ class ScrapperPaneHandler implements PaneHandler {
     }
 
     private void onInputRecalboxFileButtonPressed(ActionEvent event) {
-        FileSelector selector = new FileSelector(ownerWindow);
+        FileSelector selector = new FileSelector(ownerWindow, model.getDefaultSelectionDirectory());
 
         final String title = resourceBundle.getString("scrapper-pane.inputRecalboxFile.dialog.title");
         selector.setFileChooserTitle(title);
 
         selector.addFileChooserExtensions( recalboxFilesExtension() );
-        selector.setCurrentFile(model.getInputRecalboxFile());
+        selector.setInitialFile(model.getInputRecalboxFile());
 
         selector.showOpenDialog();
 
@@ -97,26 +96,26 @@ class ScrapperPaneHandler implements PaneHandler {
 
 
     private void onInputHyperspinFileButtonPressed(ActionEvent event) {
-        FileSelector selector = new FileSelector(ownerWindow);
+        FileSelector selector = new FileSelector(ownerWindow, model.getDefaultSelectionDirectory());
 
         final String title = resourceBundle.getString("scrapper-pane.inputHyperspinFile.dialog.title");
         selector.setFileChooserTitle(title);
 
         selector.addFileChooserExtensions(hyperspinFilesExtension());
-        selector.setCurrentFile(model.getInputRecalboxFile());
+        selector.setInitialFile(model.getInputHyperspinFile());
 
         selector.showOpenDialog();
         model.inputHyperspinFileProperty().setValue(selector.getSelectedFileAsString());
     }
 
     private void onOutputRecalboxFileButtonPressed(ActionEvent event) {
-        FileSelector selector = new FileSelector(ownerWindow);
+        FileSelector selector = new FileSelector(ownerWindow, model.getDefaultSelectionDirectory());
 
         final String title = resourceBundle.getString("scrapper-pane.outputRecalboxFile.dialog.title");
         selector.setFileChooserTitle(title);
 
         selector.addFileChooserExtensions(recalboxFilesExtension());
-        selector.setCurrentFile(model.getInputRecalboxFile());
+        selector.setInitialFile(model.getOutputRecalboxFile());
 
         selector.showSaveDialog();
         model.outputRecalboxFileProperty().setValue(selector.getSelectedFileAsString());

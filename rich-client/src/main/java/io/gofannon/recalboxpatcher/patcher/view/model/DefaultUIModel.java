@@ -23,14 +23,22 @@ import io.gofannon.recalboxpatcher.patcher.view.processing.PatcherProcessingServ
 import io.gofannon.recalboxpatcher.patcher.view.processing.RecalboxPatcherTask;
 import javafx.beans.Observable;
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.Validate.isTrue;
+import static org.apache.commons.lang3.Validate.notNull;
+
 public class DefaultUIModel implements UIModel {
+
+    private File lastSelectedDirectory;
 
     private StringProperty inputRecalboxFile;
     private StringProperty inputHyperspinFile;
@@ -56,20 +64,32 @@ public class DefaultUIModel implements UIModel {
 
     private ObjectProperty<ProcessingState> processingState;
 
-    public DefaultUIModel() {
-        inputRecalboxFile = new SimpleStringProperty(null,"inputRecalboxFile", null);
-        inputHyperspinFile = new SimpleStringProperty(null,"inputHyperspinFile", null);
-        outputRecalboxFile = new SimpleStringProperty(null,"outputRecalboxFile", null);
-        outputRecalboxFile.addListener( this::computeOutputImageRelativeDirectory);
 
-        inputImageDirectory = new SimpleStringProperty(null,"inputImageDirectory", null);
-        outputImageDirectory = new SimpleStringProperty(null,"outputImageDirectory", null);
-        outputImageRelativeDirectory = new SimpleStringProperty(null,"outputImageRelativeDirectory", null);
-        outputImageDirectory.addListener( this::computeOutputImageRelativeDirectory);
+    public DefaultUIModel() {
+        lastSelectedDirectory = FileUtils.getUserDirectory();
+
+        inputRecalboxFile = new SimpleStringProperty(null, "inputRecalboxFile", null);
+        inputRecalboxFile.addListener(this::onFileSelected);
+
+        inputHyperspinFile = new SimpleStringProperty(null, "inputHyperspinFile", null);
+        inputHyperspinFile.addListener(this::onFileSelected);
+
+        outputRecalboxFile = new SimpleStringProperty(null, "outputRecalboxFile", null);
+        outputRecalboxFile.addListener(this::onFileSelected);
+        outputRecalboxFile.addListener(this::computeOutputImageRelativeDirectory);
+
+        inputImageDirectory = new SimpleStringProperty(null, "inputImageDirectory", null);
+        inputImageDirectory.addListener(this::onDirectorySelected);
+
+        outputImageDirectory = new SimpleStringProperty(null, "outputImageDirectory", null);
+        outputImageDirectory.addListener(this::onDirectorySelected);
+        outputImageDirectory.addListener(this::computeOutputImageRelativeDirectory);
+
+        outputImageRelativeDirectory = new SimpleStringProperty(null, "outputImageRelativeDirectory", null);
 
         widthImage = new SimpleIntegerProperty(null, "imageWidth", 100);
         heightImage = new SimpleIntegerProperty(null, "imageHeight", 100);
-        imageExtension = new SimpleStringProperty(null,"imageExtension", "jpg");
+        imageExtension = new SimpleStringProperty(null, "imageExtension", "jpg");
 
         notFoundOption = new SimpleBooleanProperty(null, "notFoundOption", false);
         uppercaseOption = new SimpleBooleanProperty(null, "uppercaseOption", false);
@@ -87,7 +107,7 @@ public class DefaultUIModel implements UIModel {
     }
 
     @SuppressWarnings("unused")
-    private void computeOutputImageRelativeDirectory( Observable observable) {
+    private void computeOutputImageRelativeDirectory(Observable observable) {
         String relativePath = computeOutputImageRelativeDirectory();
         outputImageRelativeDirectory.setValue(relativePath);
     }
@@ -96,10 +116,10 @@ public class DefaultUIModel implements UIModel {
         File recalboxFile = getOutputRecalboxFile();
         File imageDirectory = getOutputImageDirectory();
 
-        if( imageDirectory == null )
+        if (imageDirectory == null)
             return "";
 
-        if( recalboxFile == null )
+        if (recalboxFile == null)
             return imageDirectory.getAbsolutePath();
 
 
@@ -107,10 +127,10 @@ public class DefaultUIModel implements UIModel {
         Path imageDirectoryPath = Paths.get(imageDirectory.getAbsolutePath());
         Path relative = recalboxDirectoryPath.relativize(imageDirectoryPath);
         String asString = relative.toString();
-        return startWithPathSeparator(asString) ? asString : "./"+asString;
+        return startWithPathSeparator(asString) ? asString : "./" + asString;
     }
 
-    private boolean startWithPathSeparator(String path ) {
+    private boolean startWithPathSeparator(String path) {
         return path.startsWith("/") || path.startsWith("./") || path.startsWith("../");
     }
 
@@ -160,7 +180,7 @@ public class DefaultUIModel implements UIModel {
     }
 
     private static File toFile(StringProperty property) {
-        return property.getValue()== null ? null : new File(property.getValue());
+        return property.getValue() == null ? null : new File(property.getValue());
     }
 
     @Override
@@ -293,5 +313,32 @@ public class DefaultUIModel implements UIModel {
     @Override
     public PatchTaskResult geLastPatchResult() {
         return patcherProcessingService.getValue();
+    }
+
+
+    @Override
+    public File getDefaultSelectionDirectory() {
+        return lastSelectedDirectory;
+    }
+
+
+    private void onFileSelected(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        setDefaultDirectory(newValue);
+    }
+
+    private void setDefaultDirectory(String pathAsString) {
+        if(isEmpty(pathAsString))
+            return;
+
+        try {
+            File path = new File(pathAsString);
+            this.lastSelectedDirectory = path.isDirectory() ? path : path.getParentFile();
+        } catch(RuntimeException ex) {
+            //Nothing to do, the lastSelectedDirectory shall not be changed
+        }
+    }
+
+    private void onDirectorySelected(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        setDefaultDirectory(newValue);
     }
 }

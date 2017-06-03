@@ -31,23 +31,17 @@ public class DirectorySelector {
     private DirectoryChooser directoryChooser = new DirectoryChooser();
     private File selectedDirectory;
     private String fileChooserTitle;
+    private File initialDirectory;
+    private File defaultDirectory;
 
 
     public DirectorySelector(Window ownerWindow) {
         this.ownerWindow = ownerWindow;
-        setDefaultInitialDirectory();
     }
 
-    private void setDefaultInitialDirectory() {
-        selectedDirectory = FileUtils.getUserDirectory();
-    }
-
-    public void setCurrentFile( File selectedDirectory ) {
-        if( selectedDirectory == null ) {
-            setDefaultInitialDirectory();
-        } else {
-            this.selectedDirectory = selectedDirectory;
-        }
+    public void setInitialDirectory(File initialDirectory, File defaultDirectory ) {
+        this.initialDirectory = initialDirectory;
+        this.defaultDirectory = defaultDirectory;
     }
 
     public void setFileChooserTitle(String fileChooserTitle) {
@@ -56,9 +50,10 @@ public class DirectorySelector {
 
     public File showOpenDialog() {
         directoryChooser.setTitle(fileChooserTitle);
-        directoryChooser.setInitialDirectory(this.selectedDirectory);
+        directoryChooser.setInitialDirectory(this.initialDirectory == null ? this.defaultDirectory : this.initialDirectory);
 
-        this.selectedDirectory = directoryChooser.showDialog(ownerWindow);
+        File resultDirectory = directoryChooser.showDialog(ownerWindow);
+        this.selectedDirectory = resultDirectory == null ? this.initialDirectory : resultDirectory;
         return selectedDirectory;
     }
 
