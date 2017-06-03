@@ -21,6 +21,7 @@ import javax.xml.bind.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.Validate.*;
@@ -74,9 +75,9 @@ public class FileRecalboxDatabase implements RecalboxDatabase {
     }
 
     @Override
-    public List<String> getGameNamesFromPath() {
+    public List<String> getGameUniqueNames() {
         return gameList.getGameList().stream()
-                .map(g -> g.getNameFromPath())
+                .map(g -> g.getUniqueName())
                 .sorted()
                 .collect(toList());
     }
@@ -91,4 +92,11 @@ public class FileRecalboxDatabase implements RecalboxDatabase {
         return gameList.getGameList();
     }
 
+    @Override
+    public RecalboxGame findByUniqueName(String uniqueName) {
+        Optional<RecalboxGame> foundGame = gameList.getGameList().stream()
+                .filter( g -> g.getUniqueName().equals(uniqueName) )
+                .findFirst();
+        return foundGame.orElse(null);
+    }
 }

@@ -1,0 +1,104 @@
+/*
+ * Copyright 2017  the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+package io.gofannon.recalboxpatcher.patcher.view.processing;
+
+import io.gofannon.recalboxpatcher.patcher.patch.common.IdentityPathPatcher;
+import io.gofannon.recalboxpatcher.patcher.patch.common.PathPatcher;
+import io.gofannon.recalboxpatcher.patcher.patch.database.DefaultGameDatabasePatcher;
+import io.gofannon.recalboxpatcher.patcher.processor.FileResourceProvider;
+import io.gofannon.recalboxpatcher.patcher.processor.GameDatabasePatchProcessor;
+import io.gofannon.recalboxpatcher.patcher.processor.PatchProcessingResult;
+import javafx.concurrent.Task;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Task for running the Recalbox patcher.
+ */
+public class RecalboxPatcherTask extends Task<PatchTaskResult> {
+
+    private PatchTaskContext context;
+
+
+
+    public RecalboxPatcherTask(PatchTaskContext context) {
+        this.context = context;
+    }
+
+    @Override
+    protected PatchTaskResult call() throws Exception {
+        File inputRecalboxFile = context.getInputRecalboxFile();
+        File inputHyperspinFile = context.getInputHyperspinFile();
+        File outputRecalboxFile = context.getOutputRecalboxFile();
+
+        PathPatcher imagePathPatcher = new IdentityPathPatcher();
+
+        FileResourceProvider resourceProvider = new FileResourceProvider();
+        resourceProvider.setInputRecalboxDatabaseFile(inputRecalboxFile);
+        resourceProvider.setInputHyperspinDatabaseFile(inputHyperspinFile);
+        resourceProvider.setOutputRecalboxDatabaseFile(outputRecalboxFile);
+        resourceProvider.setImagePathPatcher(imagePathPatcher);
+
+        DefaultGameDatabasePatcher patcher = new DefaultGameDatabasePatcher();
+        patcher.setImagePathPatcher(imagePathPatcher);
+
+        GameDatabasePatchProcessor processor = new GameDatabasePatchProcessor();
+        processor.setResourceProvider(resourceProvider);
+        processor.setGamePatcher(patcher);
+
+        PatchProcessingResult processingResult = processor.process();
+
+        PatchTaskResult result = new PatchTaskResult();
+        result.setLogs(createLogs(processingResult));
+        return result;
+    }
+
+    private List<String> createLogs(PatchProcessingResult result) {
+        List<String> logs = new ArrayList<>();
+        logs.add("Context: ");
+        logs.add("Fichier d'entrée Recalbox: "+context.getInputRecalboxFile());
+        logs.add("Fichier d'entrée Hyperspin: "+context.getInputHyperspinFile());
+        logs.add("Fichier de sortie Recalbox: "+context.getOutputRecalboxFile());
+        logs.add("Chemin des fichiers à télécharger: "+context.getInputImageDirectory());
+        logs.add("Chemin des images dans le fichier: "+context.getOutputImageDirectory());
+        logs.add("Hauteur des images: "+context.getHeightImage());
+        logs.add("Largeur des images: "+context.getWidthImage());
+        logs.add("Extension des images: "+context.getImageExtension());
+        logs.add("Option 'Non trouvée' activée: "+context.isNotFoundOption());
+        logs.add("Option 'Majuscule' activée: "+context.isUppercaseOption());
+        logs.add("Option 'Nouveau Fichier' activée: "+context.isNewFileOption());
+        logs.add("Option 'Ajout de nom' activée: "+context.isAddNameOption());
+
+        logs.add("Resultat: ");
+        logs.add("Nombre de jeux: "+result.getTotalGameCount());
+        logs.add("Nombre de jeux patchés: "+result.getPatchedGameCount());
+        logs.add("Nombre de jeux non patchés: "+result.getNotPatchedGameCount());
+
+        List<String> patchedGames = result.getPatchedGames();
+        Collections.sort(patchedGames);
+        logs.add("Liste des jeux patchés: "+String.join(",", patchedGames));
+
+        List<String> notPatchedGames = result.getNotPatchedGames();
+        Collections.sort(notPatchedGames);
+        logs.add("Liste des jeux non patchés: "+String.join(",", notPatchedGames));
+
+        return logs;
+    }
+}

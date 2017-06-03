@@ -53,7 +53,7 @@ public class DefaultGameDatabasePatcher implements GameDatabasePatcher {
         patchedGame.setDeveloper(hyperspinGame.getDeveloper());
         patchedGame.setPublisher(hyperspinGame.getManufacturer());
         patchedGame.setGenre(hyperspinGame.getGenre());
-        patchedGame.setPlayCount(hyperspinGame.getPlayers());
+        patchedGame.setPlayCount(hyperspinGame.getPlayerCount());
         patchedGame.setLastPlayed("");
         patchedGame.setImage(patchedImagePath(recalboxGame));
 

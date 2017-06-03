@@ -19,6 +19,7 @@ package io.gofannon.recalboxpatcher.patcher.view;
 import io.gofannon.recalboxpatcher.patcher.view.model.DefaultUIModel;
 import io.gofannon.recalboxpatcher.patcher.view.model.UIModel;
 import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskResult;
+import io.gofannon.recalboxpatcher.patcher.view.processing.ProcessingState;
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -95,21 +96,26 @@ public class RecalboxPatcherApplication extends Application {
     }
 
     private void onProcessingStateChanged(ObservableValue<? extends ProcessingState> observable, ProcessingState oldValue, ProcessingState newValue) {
-        if( newValue == ProcessingState.SUCESS)
+        if( newValue == ProcessingState.SUCCESS)
             patchSucceeded();
 
         saveButton.setDisable( newValue == ProcessingState.RUNNING);
     }
 
     private void patchSucceeded() {
-        PatchTaskResult result = model.geLastPatchResult();
+        Dialog<Void> dialog = new Dialog<>();
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Génération du fichier");
-        alert.setHeaderText("Désolé, le générateur de fichier n'est pas encore intégré.");
-        String content = String.join("\n", result.getLogs());
-        alert.setContentText(content);
-        alert.showAndWait();
+        EndProcessingDialogHandler dialogPane = new EndProcessingDialogHandler();
+        dialogPane.initialize(dialog, model);
+        dialog.showAndWait();
+
+//        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//        alert.setTitle("Génération du fichier");
+//        alert.setHeaderText("Désolé, le générateur de fichier n'est pas encore intégré.");
+//        PatchTaskResult result = model.geLastPatchResult();
+//        String content = String.join("\n", result.getLogs());
+//        alert.setContentText(content);
+//        alert.showAndWait();
     }
 
 

@@ -21,6 +21,7 @@ import static org.apache.commons.lang3.Validate.*;
 
 public class RecalboxGame {
 
+    private String uniqueName;
     private String path;
     private String name;
     private String desc;
@@ -49,7 +50,14 @@ public class RecalboxGame {
         this.genre = recalboxGame.genre;
         this.playCount = recalboxGame.playCount;
         this.lastPlayed = recalboxGame.lastPlayed;
+        initUniqueName();
     }
+
+    private void initUniqueName() {
+        int index = path.lastIndexOf('/');
+        uniqueName = path.substring(index+1).replace(".nes", "");
+    }
+
 
     @XmlElement
     public String getPath() {
@@ -58,6 +66,7 @@ public class RecalboxGame {
 
     public void setPath(String path) {
         this.path = path;
+        initUniqueName();
     }
 
     @XmlElement
@@ -152,10 +161,29 @@ public class RecalboxGame {
     }
 
     @XmlTransient
-    public String getNameFromPath() {
-        int index = path.lastIndexOf('/');
-        return path.substring(index+1).replace(".nes", "");                
+    public String getUniqueName() {
+        return uniqueName;
     }
 
- 
+    @Override
+    public String toString() {
+        return "RecalboxGame{" +
+                "uniqueName='" + uniqueName + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RecalboxGame that = (RecalboxGame) o;
+
+        return uniqueName != null ? uniqueName.equals(that.uniqueName) : that.uniqueName == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return uniqueName != null ? uniqueName.hashCode() : 0;
+    }
 }

@@ -60,7 +60,7 @@ public class DefaultGameDatabasePatcherTest {
         hyperspinGame.setDeveloper("hyperspinDeveloper");
         hyperspinGame.setManufacturer("hyperspinManufacturer");
         hyperspinGame.setGenre("hyperspinGenre");
-        hyperspinGame.setPlayers(50);
+        hyperspinGame.setPlayers("50");
     }
 
     @After

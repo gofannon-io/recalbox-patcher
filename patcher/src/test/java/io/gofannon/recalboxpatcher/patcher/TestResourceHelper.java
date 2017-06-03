@@ -27,36 +27,48 @@ import java.io.*;
  */
 public class TestResourceHelper {
 
-    public static void createRecalboxFile(File targetFile) throws IOException {
-        try(InputStream in = openResource("/Recalbox gamelist.xml")) {
+    public static final String RECALBOX_RESOURCE = "/Recalbox gamelist.xml";
+    public static final String HYPERSPIN_RESOURCE = "/Hyperspin Nintendo Entertainment System.xml";
+
+
+    public static File copyResourceToFile(String sourceResource, File targetFile) throws IOException {
+        try(InputStream in = openResourceAsStream(sourceResource)) {
             FileUtils.copyInputStreamToFile(in, targetFile);
         }
+        return targetFile;
     }
 
-    private static InputStream openResource(String name) {
+
+    public static File createRecalboxFile(File targetFile) throws IOException {
+        return copyResourceToFile(RECALBOX_RESOURCE, targetFile );
+    }
+
+    public static InputStream openResourceAsStream(String name) {
         return TestResourceHelper.class.getResourceAsStream(name);
     }
 
-    public static void createHyperspinFile(File targetFile) throws IOException {
-        try(InputStream in = openResource("/Hyperspin Nintendo Entertainment System.xml")) {
-            FileUtils.copyInputStreamToFile(in, targetFile);
-        }
+
+    public static File createHyperspinFile(File targetFile) throws IOException {
+        return copyResourceToFile(HYPERSPIN_RESOURCE, targetFile );
     }
+
 
     public static File createRecalboxFile(TemporaryFolder folder, String filename) throws IOException {
         return createRecalboxFile(folder.getRoot(), filename);
     }
 
+
     public static File createRecalboxFile(TemporaryFolder folder) throws IOException {
         return createRecalboxFile(folder, "recalbox.xml");
     }
 
+
     public static InputStream openRecalboxStream() throws IOException {
-        return openResourceStream("/Recalbox gamelist.xml");
+        return openResourceStream(RECALBOX_RESOURCE);
     }
 
     private static InputStream openResourceStream(String path) throws IOException {
-        try(InputStream in = openResource(path)) {
+        try(InputStream in = openResourceAsStream(path)) {
 
             ByteArrayOutputStream memoryOutputStream = new ByteArrayOutputStream();
             IOUtils.copy(in, memoryOutputStream);
@@ -66,35 +78,28 @@ public class TestResourceHelper {
     }
 
 
-
     public static File createRecalboxFile(File parentDir, String filename) throws IOException {
-        File tempFile = new File(parentDir, filename);
-        createRecalboxFile(tempFile);
-        return tempFile;
+        return createRecalboxFile(new File(parentDir, filename));
     }
+
 
     public static File createHyperspinFile(TemporaryFolder folder, String filename) throws IOException {
         return createHyperspinFile(folder.getRoot(), filename);
     }
 
+
     public static File createHyperspinFile(TemporaryFolder folder) throws IOException {
         return createHyperspinFile(folder, "hyperspin.xml");
     }
 
+
     public static File createHyperspinFile(File parentDir, String filename) throws IOException {
-        File tempFile = new File(parentDir, filename);
-        createHyperspinFile(tempFile);
-        return tempFile;
+        return createHyperspinFile(new File(parentDir, filename));
     }
 
-    public static void addResourceToDirectory( String resourcePath, File directory ) throws IOException {
-        try(InputStream in = openResource(resourcePath)) {
-
-            String filename = extractResourceFilename(resourcePath);
-            File targetFile = new File(directory,filename);
-            FileUtils.copyInputStreamToFile(in, targetFile);
-
-        }
+    public static File addResourceToDirectory( String resourcePath, File directory ) throws IOException {
+        String filename = extractResourceFilename(resourcePath);
+        return copyResourceToFile( resourcePath, new File(directory,filename));
     }
 
     public static String extractResourceFilename(String resourcePath) {
@@ -113,7 +118,7 @@ public class TestResourceHelper {
     }
 
     public static Image getImage(String resourcePath) throws Exception {
-        try( InputStream in = openResource(resourcePath); ) {
+        try(InputStream in = openResourceAsStream(resourcePath); ) {
             return new Image(in);
         }
     }

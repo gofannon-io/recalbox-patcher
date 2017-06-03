@@ -14,13 +14,13 @@
  *  limitations under the License.
  */
 
-package io.gofannon.recalboxpatcher.patcher.view;
+package io.gofannon.recalboxpatcher.patcher.view.processing;
 
 public enum ProcessingState {
 
     INITIAL,
     RUNNING,
-    SUCESS,
+    SUCCESS,
     FAILURE,
     CANCEL;
 

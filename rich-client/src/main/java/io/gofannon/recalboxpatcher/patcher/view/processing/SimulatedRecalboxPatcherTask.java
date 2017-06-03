@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package io.gofannon.recalboxpatcher.patcher.view;
+package io.gofannon.recalboxpatcher.patcher.view.processing;
 
 import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskContext;
 import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskResult;
@@ -26,12 +26,12 @@ import java.util.List;
 /**
  * Task for running the Recalbox patcher.
  */
-public class RecalboxPatcherTask extends Task<PatchTaskResult> {
+public class SimulatedRecalboxPatcherTask extends Task<PatchTaskResult> {
 
     private PatchTaskContext context;
 
 
-    public RecalboxPatcherTask(PatchTaskContext context) {
+    public SimulatedRecalboxPatcherTask(PatchTaskContext context) {
         this.context = context;
     }
 

@@ -16,20 +16,11 @@
 
 package io.gofannon.recalboxpatcher.patcher.view.model;
 
-import io.gofannon.recalboxpatcher.patcher.view.ProcessingState;
+import io.gofannon.recalboxpatcher.patcher.view.processing.ProcessingState;
 import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskResult;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public interface UIModel {
@@ -75,9 +66,14 @@ public interface UIModel {
 
     StringProperty operationLogProperty();
 
+    String getOperationLog();
+
     ObjectProperty<ProcessingState> processingStateProperty();
+
+    ProcessingState getProcessingState();
 
     void launchPatchProcess();
 
+    //FIXME is it really usefull, can't we use #getOperationLogs & co ?
     PatchTaskResult geLastPatchResult();
 }

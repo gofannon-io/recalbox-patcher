@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package io.gofannon.recalboxpatcher.patcher.processor;
 
+package io.gofannon.recalboxpatcher.patcher.processor.validator;
+
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.List;
 
-public interface PatchProcessingResult {
+public interface GameValidationReport {
 
+    default boolean isValidationCorrect() {
+        return getFailedFields().size() > 0;
+    }
 
-    List<String> getPatchedGames();
+    String getGameUniqueName();
 
-    List<String> getNotPatchedGames();
+    List<FailedField> getFailedFields();
 
-    boolean hasNotPatchedGame();
-
-    int getPatchedGameCount();
-
-    int getNotPatchedGameCount();
-
-    int getTotalGameCount();
+    void write(PrintStream out) throws IOException;
 }

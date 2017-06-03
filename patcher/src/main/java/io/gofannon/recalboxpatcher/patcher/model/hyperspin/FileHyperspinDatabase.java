@@ -16,13 +16,11 @@
 package io.gofannon.recalboxpatcher.patcher.model.hyperspin;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.xml.bind.JAXB;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -71,14 +69,14 @@ public class FileHyperspinDatabase implements HyperspinDatabase {
         return StringEscapeUtils.unescapeXml(game.getName());
     }
 
-    public void loadFromStream(InputStream stream) throws IOException {
-        String rawXml = readStream(stream);
-        loadFromRawXml(rawXml);
-    }
+//    public void loadFromStream(InputStream stream) throws IOException {
+//        String rawXml = readStream(stream);
+//        loadFromRawXml(rawXml);
+//    }
 
-    private String readStream(InputStream stream) throws IOException {
-        return IOUtils.toString(stream, Charset.forName("UTF-8"));
-    }
+//    private String readStream(InputStream stream) throws IOException {
+//        return IOUtils.toString(stream, Charset.forName("UTF-8"));
+//    }
 
     @Override
     public HyperspinGame findByName(String name) {

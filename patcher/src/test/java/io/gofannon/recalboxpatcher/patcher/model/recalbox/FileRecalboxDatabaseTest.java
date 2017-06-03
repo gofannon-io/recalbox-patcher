@@ -129,7 +129,7 @@ public class FileRecalboxDatabaseTest {
 
     @Test
     public void getGameNamesFromPath_shallReturnEmptyListByDefault() throws Exception {
-        List<String> names = database.getGameNamesFromPath();
+        List<String> names = database.getGameUniqueNames();
         assertThat(names)
                 .isEmpty();
     }
@@ -140,7 +140,7 @@ public class FileRecalboxDatabaseTest {
             database.loadFromStream(in);
         }
 
-        List<String> names = database.getGameNamesFromPath();
+        List<String> names = database.getGameUniqueNames();
         assertThat(names)
                 .isNotEmpty();
     }

@@ -29,7 +29,7 @@ import static org.apache.commons.lang3.Validate.*;
 public class GameDatabasePatchProcessor {
 
     private GameDatabasePatchResourceProvider resourceProvider;
-    private PatchProcessingResult result;
+    private DefaultPatchProcessingResult result;
     private HyperspinDatabase hyperspinDatabase;
     private RecalboxDatabase recalboxDatabase;
     private RecalboxDatabase patchedDatabase;
@@ -54,12 +54,11 @@ public class GameDatabasePatchProcessor {
         patchRecalBoxDatabase();
         shutdown();
 
-
         return result;
     }
 
     private void initializeResult() {
-        result = new PatchProcessingResult();
+        result = new DefaultPatchProcessingResult();
     }
 
     private void checkResourceProvider() {
@@ -94,7 +93,7 @@ public class GameDatabasePatchProcessor {
     }
 
     private HyperspinGame findGame(RecalboxGame recalboxGame) {
-        String name = recalboxGame.getNameFromPath();
+        String name = recalboxGame.getUniqueName();
         HyperspinGame hyperspinGame = hyperspinDatabase.findByName(name);
         if( hyperspinGame != null)
             return hyperspinGame;
@@ -104,17 +103,17 @@ public class GameDatabasePatchProcessor {
     }
 
     private void patchGameAlone(RecalboxGame recalboxGame) {
-        String name = recalboxGame.getNameFromPath();
-        result.logGameNotFoundInHypersinDatabase(name);
+        String name = recalboxGame.getUniqueName();
         RecalboxGame patchedGame = resourceProvider.duplicateGame(recalboxGame);
         patchedDatabase.addGame( patchedGame );
+        result.logGameNotFoundInHypersinDatabase(name);
     }
 
     private void patchGameFromHyperspin(RecalboxGame recalboxGame, HyperspinGame hyperspinGame) {
-        String name = recalboxGame.getNameFromPath();
+        String name = recalboxGame.getUniqueName();
         RecalboxGame patchedGame = gamePatcher.patch(recalboxGame, hyperspinGame);
-        result.logGamePatched(name);
         patchedDatabase.addGame( patchedGame );
+        result.logGamePatched(name);
     }
 
     private void shutdown() {

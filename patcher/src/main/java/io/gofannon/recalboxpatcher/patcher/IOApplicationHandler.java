@@ -116,7 +116,7 @@ public class IOApplicationHandler implements ApplicationHandler {
         out.println(String.format("%% of success : %.02f", percent));
 
 
-        if (result.hasNotFixedGame()) {
+        if (result.hasNotPatchedGame()) {
             out.println("Cannot found the following games in Hyperspin database:");
             result.getNotPatchedGames().stream().forEach(n -> out.println(n));
             out.println("-------------------------");

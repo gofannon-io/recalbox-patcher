@@ -17,6 +17,9 @@ package io.gofannon.recalboxpatcher.patcher.model.hyperspin;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+import java.util.Scanner;
+import static org.apache.commons.lang3.StringUtils.*;
 
 public class HyperspinGame {
 
@@ -27,14 +30,10 @@ public class HyperspinGame {
     private String manufacturer;
     private String developer;
     private String genre;
-    private int players;
+    private String players;
+    private int playerCount;
 
     public HyperspinGame() {
-    }
-
-    public HyperspinGame(String name, String description) {
-        this.name = name;
-        this.description = description;
     }
 
     @XmlAttribute(name = "name", required = true)
@@ -101,12 +100,30 @@ public class HyperspinGame {
     }
 
     @XmlElement(name = "players", required = true)
-    public int getPlayers() {
+    public String getPlayers() {
         return players;
     }
 
-    public void setPlayers(int players) {
+    public void setPlayers(String players) {
         this.players = players;
+        this.playerCount = computePlayerCount();
+    }
+
+    private int computePlayerCount() {
+        if( isEmpty(players))
+            return 0;
+
+        try {
+            Scanner scanner = new Scanner(players);
+            return Math.abs(scanner.nextInt());
+        } catch(Exception ex) {
+            return 0;
+        }
+    }
+
+    @XmlTransient
+    public int getPlayerCount() {
+        return playerCount;
     }
 
 }

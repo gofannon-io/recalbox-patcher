@@ -20,7 +20,7 @@ import java.util.List;
 public interface RecalboxDatabase {
 
 
-    List<String> getGameNamesFromPath();
+    List<String> getGameUniqueNames();
 
     /**
      * Get all the games in the database
@@ -35,4 +35,11 @@ public interface RecalboxDatabase {
      * @throws NullPointerException if the game argument is <code>null</code>
      */
     void addGame(RecalboxGame game) throws NullPointerException;
+
+    /**
+     * Find a game from its unique name,
+     * @param uniqueName the unique game
+     * @return the found game, may be null
+     */
+    RecalboxGame findByUniqueName(String uniqueName);
 }

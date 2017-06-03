@@ -13,22 +13,19 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package io.gofannon.recalboxpatcher.patcher.processor;
 
-import java.util.List;
+package io.gofannon.recalboxpatcher.patcher.view.utils;
 
-public interface PatchProcessingResult {
+import java.util.Collection;
+import static org.apache.commons.lang3.Validate.notNull;
 
+public final class StringHelper {
 
-    List<String> getPatchedGames();
+    public static String join(CharSequence separator, Collection<String> strings) {
+        notNull(separator, "separator argument shall not be null");
+        notNull(strings, "strings argument shall not be null");
 
-    List<String> getNotPatchedGames();
-
-    boolean hasNotPatchedGame();
-
-    int getPatchedGameCount();
-
-    int getNotPatchedGameCount();
-
-    int getTotalGameCount();
+        String[] stringsAsArray = strings.toArray(new String[0]);
+        return String.join(separator, stringsAsArray);
+    }
 }

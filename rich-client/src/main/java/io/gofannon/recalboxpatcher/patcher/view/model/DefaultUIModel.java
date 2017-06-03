@@ -16,13 +16,13 @@
 
 package io.gofannon.recalboxpatcher.patcher.view.model;
 
-import io.gofannon.recalboxpatcher.patcher.view.ProcessingState;
+import io.gofannon.recalboxpatcher.patcher.view.processing.ProcessingState;
 import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskContext;
 import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskResult;
 import io.gofannon.recalboxpatcher.patcher.view.processing.PatcherProcessingService;
+import io.gofannon.recalboxpatcher.patcher.view.processing.RecalboxPatcherTask;
 import javafx.beans.Observable;
 import javafx.beans.property.*;
-import javafx.concurrent.Worker;
 import javafx.concurrent.WorkerStateEvent;
 
 import java.io.File;
@@ -80,7 +80,7 @@ public class DefaultUIModel implements UIModel {
 
         processingState = new SimpleObjectProperty<>(null, "processingState", ProcessingState.INITIAL);
 
-        patcherProcessingService = new PatcherProcessingService();
+        patcherProcessingService = new PatcherProcessingService(RecalboxPatcherTask.class);
         patcherProcessingService.setOnSucceeded(this::processSucceeded);
         patcherProcessingService.setOnFailed(this::processOnFailed);
         patcherProcessingService.setOnCancelled(this::processOnCancelled);
@@ -218,6 +218,15 @@ public class DefaultUIModel implements UIModel {
         return operationLog;
     }
 
+    @Override
+    public String getOperationLog() {
+        return operationLog.getValue();
+    }
+
+    @Override
+    public ProcessingState getProcessingState() {
+        return processingStateProperty().getValue();
+    }
 
     @Override
     public ObjectProperty<ProcessingState> processingStateProperty() {
@@ -233,29 +242,6 @@ public class DefaultUIModel implements UIModel {
 
         processingStateProperty().setValue(ProcessingState.RUNNING);
     }
-
-    private void processSucceeded(WorkerStateEvent stateEvent) {
-        updateLogFromPatcherProcessing();
-        processingStateProperty().setValue(ProcessingState.SUCESS);
-    }
-
-    private void updateLogFromPatcherProcessing() {
-        List<String> lines = patcherProcessingService.getValue().getLogs();
-        String buffer = String.join("\n", lines.toArray(new String[0]));
-        operationLog.setValue(buffer);
-    }
-
-
-    private void processOnFailed(WorkerStateEvent stateEvent) {
-        operationLog.setValue("Failure");
-        processingStateProperty().setValue(ProcessingState.FAILURE);
-    }
-
-    private void processOnCancelled(WorkerStateEvent stateEvent) {
-        operationLog.setValue("Cancelled");
-        processingStateProperty().setValue(ProcessingState.CANCEL);
-    }
-
 
     private PatchTaskContext createPatchTaskContext() {
         PatchTaskContext context = new PatchTaskContext();
@@ -277,6 +263,31 @@ public class DefaultUIModel implements UIModel {
         context.setNotFoundOption(notFoundOptionProperty().getValue());
 
         return context;
+    }
+
+
+    private void processSucceeded(WorkerStateEvent stateEvent) {
+        updateLogFromPatcherProcessing();
+        processingStateProperty().setValue(ProcessingState.SUCCESS);
+    }
+
+    private void updateLogFromPatcherProcessing() {
+        PatchTaskResult patchTaskResult = patcherProcessingService.getValue();
+        List<String> lines = patchTaskResult.getLogs();
+        String[] linesAsArray = lines.toArray(new String[0]);
+        String buffer = String.join("\n", linesAsArray);
+        operationLog.setValue(buffer);
+    }
+
+
+    private void processOnFailed(WorkerStateEvent stateEvent) {
+        operationLog.setValue("Failure");
+        processingStateProperty().setValue(ProcessingState.FAILURE);
+    }
+
+    private void processOnCancelled(WorkerStateEvent stateEvent) {
+        operationLog.setValue("Cancelled");
+        processingStateProperty().setValue(ProcessingState.CANCEL);
     }
 
     @Override
