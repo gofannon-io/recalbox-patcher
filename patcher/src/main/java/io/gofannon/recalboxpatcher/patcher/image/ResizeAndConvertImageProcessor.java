@@ -19,13 +19,10 @@ import io.gofannon.recalboxpatcher.patcher.patch.image.ImageDimension;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.imageio.ImageIO;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.apache.commons.lang3.Validate.*;
 
@@ -35,16 +32,7 @@ import static org.apache.commons.lang3.Validate.*;
  */
 public class ResizeAndConvertImageProcessor implements ImageProcessor {
 
-    private static final List<String> IMAGE_FILE_EXTENSIONS = new ArrayList<>(
-            Arrays.asList(
-                    "jpg",
-                    "jpeg",
-                    "png",
-                    "gif"
-            )
-    );
-
-    private String type;
+    private ImageFormat imageFormat;
     private ImageDimension dimension;
     private File targetDirectory;
     private ImageProcessingResultImpl results;
@@ -55,9 +43,8 @@ public class ResizeAndConvertImageProcessor implements ImageProcessor {
         this.dimension = new ImageDimension(dimension);
     }
 
-    public void setType(String type) {
-        isTrue(IMAGE_FILE_EXTENSIONS.contains(type), "type is not supported");
-        this.type = type;
+    public void setImageFormat(ImageFormat imageFormat) {
+        this.imageFormat = imageFormat;
     }
 
     @Override
@@ -81,8 +68,8 @@ public class ResizeAndConvertImageProcessor implements ImageProcessor {
         if( file.isFile()==false)
             return false;
 
-        String extension = FilenameUtils.getExtension(file.getName()).toLowerCase();
-        return IMAGE_FILE_EXTENSIONS.contains(extension);
+        String extension = FilenameUtils.getExtension(file.getName());
+        return ImageFormat.isSupportedExtension(extension);
     }
 
 
@@ -90,7 +77,6 @@ public class ResizeAndConvertImageProcessor implements ImageProcessor {
         try {
 
             currentImageResult = new SingleImageProcessingResultImpl();
-            results.addResult(currentImageResult);
             currentImageResult.setInputFile(inputImageFile);
 
             BufferedImage inputImage = ImageIO.read(inputImageFile);
@@ -102,7 +88,7 @@ public class ResizeAndConvertImageProcessor implements ImageProcessor {
             currentImageResult.setOutputFile(outputFile);
             currentImageResult.setTypeChanged( hasCurrentType(inputImageFile));
 
-            boolean success = ImageIO.write(scaledImage, type, outputFile);
+            boolean success = ImageIO.write(scaledImage, imageFormat.getImageIOFormatName(), outputFile);
             currentImageResult.setWritten(true);
             currentImageResult.setSuccess(success);
 
@@ -110,21 +96,23 @@ public class ResizeAndConvertImageProcessor implements ImageProcessor {
             currentImageResult.setSuccess(false);
             currentImageResult.setException(ioEx);
         }
+
+        results.addResult(currentImageResult);
     }
 
     private boolean hasCurrentType(File file) {
         String extension = FilenameUtils.getExtension(file.getName());
-        return type.equalsIgnoreCase(extension);
+        return imageFormat.isCompatibleExtension(extension);
     }
 
     private File computeOutputFile(File inputImageFile) {
         String baseName = FilenameUtils.getBaseName(inputImageFile.getName());
-        String targetName = baseName+"."+type;
+        String targetName = baseName+"."+ imageFormat.getDefaultExtension();
         return new File(targetDirectory, targetName);
     }
 
     private BufferedImage processFile(BufferedImage inputImage) {
-        notEmpty(type, "type is not set");
+        notNull(imageFormat, "imageFormat is not set");
         notNull(dimension, "dimension is not set");
 
         if( hasExpectedSize(inputImage)) {
@@ -141,7 +129,7 @@ public class ResizeAndConvertImageProcessor implements ImageProcessor {
         BufferedImage scaledImage = new BufferedImage(
                 tempImage.getWidth(null),
                 tempImage.getHeight(null),
-                BufferedImage.TYPE_INT_ARGB);
+                imageFormat.getType());
 
         Graphics2D g2 = scaledImage.createGraphics();
         try {

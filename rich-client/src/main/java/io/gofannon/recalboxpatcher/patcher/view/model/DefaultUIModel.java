@@ -16,6 +16,7 @@
 
 package io.gofannon.recalboxpatcher.patcher.view.model;
 
+import io.gofannon.recalboxpatcher.patcher.image.ImageFormat;
 import io.gofannon.recalboxpatcher.patcher.view.processing.ProcessingState;
 import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskContext;
 import io.gofannon.recalboxpatcher.patcher.view.processing.PatchTaskResult;
@@ -30,6 +31,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -51,7 +53,8 @@ public class DefaultUIModel implements UIModel {
     private IntegerProperty widthImage;
     private IntegerProperty heightImage;
     private StringProperty imageExtension;
-    private final String[] imageFileExtensionList = {"jpg", "png", "gif"};
+
+    private List<String> imageFileExtensionList = new ArrayList<>();
 
     private BooleanProperty notFoundOption;
     private BooleanProperty uppercaseOption;
@@ -66,6 +69,11 @@ public class DefaultUIModel implements UIModel {
 
 
     public DefaultUIModel() {
+        for(ImageFormat format : ImageFormat.values()) {
+            imageFileExtensionList.add(format.getDefaultExtension());
+        }
+
+
         lastSelectedDirectory = FileUtils.getUserDirectory();
 
         inputRecalboxFile = new SimpleStringProperty(null, "inputRecalboxFile", null);
@@ -89,7 +97,7 @@ public class DefaultUIModel implements UIModel {
 
         widthImage = new SimpleIntegerProperty(null, "imageWidth", 100);
         heightImage = new SimpleIntegerProperty(null, "imageHeight", 100);
-        imageExtension = new SimpleStringProperty(null, "imageExtension", "jpg");
+        imageExtension = new SimpleStringProperty(null, "imageExtension", ImageFormat.JPEG.getDefaultExtension());
 
         notFoundOption = new SimpleBooleanProperty(null, "notFoundOption", false);
         uppercaseOption = new SimpleBooleanProperty(null, "uppercaseOption", false);
@@ -210,7 +218,7 @@ public class DefaultUIModel implements UIModel {
 
     @Override
     public String[] getImageFileExtensionList() {
-        return imageFileExtensionList;
+        return imageFileExtensionList.toArray(new String[0]);
     }
 
     @Override
@@ -276,7 +284,10 @@ public class DefaultUIModel implements UIModel {
 
         context.setWidthImage(widthImageProperty().getValue());
         context.setHeightImage(heightImageProperty().getValue());
-        context.setImageExtension(imageExtensionProperty().getValue());
+
+        String imageExtension = imageExtensionProperty().getValue();
+        ImageFormat imageFormat = ImageFormat.fromExtension(imageExtension);
+        context.setImageFormat(imageFormat);
 
         context.setAddNameOption(addNameOptionProperty().getValue());
         context.setUppercaseOption(uppercaseOptionProperty().getValue());

@@ -31,4 +31,6 @@ public interface PatchProcessingResult {
     int getNotPatchedGameCount();
 
     int getTotalGameCount();
+
+    boolean isSuccess();
 }

@@ -27,6 +27,11 @@ public class DefaultPatchProcessingResult implements PatchProcessingResult, Oper
     private Set<String> notPatchedGames = new HashSet<>();
 
     @Override
+    public boolean isSuccess() {
+        return true;
+    }
+
+    @Override
     public void logGamePatched(String name) {
         this.patchedRecalGames.add(name);
     }

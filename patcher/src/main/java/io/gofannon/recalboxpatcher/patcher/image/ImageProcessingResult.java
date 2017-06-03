@@ -20,12 +20,15 @@ import java.util.List;
 
 public interface ImageProcessingResult {
 
+    default boolean isSuccess() {
+        return getFailedProcessingImageCount()==0;
+    }
+
     int getImageCount();
 
     int getSucceededProcessedImageCount();
 
     int getFailedProcessingImageCount();
-
 
     List<SingleImageProcessingResult> getProcessedImages();
 

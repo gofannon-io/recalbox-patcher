@@ -16,6 +16,8 @@
 
 package io.gofannon.recalboxpatcher.patcher.view.processing;
 
+import io.gofannon.recalboxpatcher.patcher.image.ImageFormat;
+
 import java.io.File;
 
 /**
@@ -34,7 +36,7 @@ public class PatchTaskContext {
     private int heightImage;
     private int widthImage;
 
-    private String imageExtension;
+    private ImageFormat imageFormat;
 
     private boolean notFoundOption;
     private boolean uppercaseOption;
@@ -105,12 +107,12 @@ public class PatchTaskContext {
         this.widthImage = widthImage;
     }
 
-    public String getImageExtension() {
-        return imageExtension;
+    public ImageFormat getImageFormat() {
+        return imageFormat;
     }
 
-    public void setImageExtension(String imageExtension) {
-        this.imageExtension = imageExtension;
+    public void setImageFormat(ImageFormat imageFormat) {
+        this.imageFormat = imageFormat;
     }
 
     public boolean isNotFoundOption() {

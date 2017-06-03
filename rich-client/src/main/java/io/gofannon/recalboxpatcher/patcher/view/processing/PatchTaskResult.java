@@ -18,28 +18,18 @@ package io.gofannon.recalboxpatcher.patcher.view.processing;
 
 
 import io.gofannon.recalboxpatcher.patcher.image.ImageProcessingResult;
+import io.gofannon.recalboxpatcher.patcher.processor.PatchProcessingResult;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class PatchTaskResult {
+public interface PatchTaskResult {
 
-    private List<String> logs = new ArrayList<>();
-    private ImageProcessingResult imageProcessingResult;
+    boolean isSuccess();
 
-    public List<String> getLogs() {
-        return logs;
-    }
+    PatchProcessingResult getGameProcessingResult();
 
-    public void setLogs(List<String> logs) {
-        this.logs = logs;
-    }
+    List<String> getLogs();
 
-    public ImageProcessingResult getImageProcessingResult() {
-        return imageProcessingResult;
-    }
+    ImageProcessingResult getImageProcessingResult();
 
-    public void setImageProcessingResult(ImageProcessingResult imageProcessingResult) {
-        this.imageProcessingResult = imageProcessingResult;
-    }
 }
