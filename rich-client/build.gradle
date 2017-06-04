@@ -28,7 +28,6 @@ jar {
         attributes 'Implementation-Title': 'RecalBox Patcher RichClient',
                    'Implementation-Version': version,
                    'Main-Class': mainClassName
-
     }
 
 }
@@ -44,13 +43,15 @@ task createExecJar( type: Jar ) {
         from {
             List<File> allFiles = new ArrayList<>();
             configurations.compile.collect {
-                allFiles.addAll( zipTree(it).getAt("asFileTrees") )
+                if( it.getName().equals(archiveName)==false) {
+                    allFiles.addAll( zipTree(it).getAt("asFileTrees") )
+                }
             }
 
             allFiles
         }
 
-        destinationDir = new File(project.buildDir, "executable-single")
+        destinationDir = distsDir
         archiveName="recalbox-patcher-"+version+".jar"
     }
 }
